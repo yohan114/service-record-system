@@ -18,80 +18,47 @@ function switchPriceTab(tab) {
     document.getElementById('pl-oils-container').style.display = tab === 'oils' ? 'block' : 'none';
     document.getElementById('pl-filters-container').style.display = tab === 'filters' ? 'block' : 'none';
     
-    // Add button visibility (only for Filters)
+    // Add button visibility
+    document.getElementById('btn-add-oil-item').style.display = tab === 'oils' ? 'block' : 'none';
     document.getElementById('btn-add-price-item').style.display = tab === 'filters' ? 'block' : 'none';
 
-    if (tab === 'oils') {
-        renderOilsPriceList();
-    } else {
-        renderFiltersPriceList();
-    }
+    filterPriceList();
 }
 
 function renderOilsPriceList() {
     const tbody = document.getElementById('pl-oils-tbody');
+    const searchVal = document.getElementById('pl-search').value.trim().toUpperCase();
     if (!tbody) return;
 
+    let items = globalData.oilsList || [];
+    if (searchVal) {
+        items = items.filter(o => 
+            (o.OilName && o.OilName.toUpperCase().includes(searchVal)) ||
+            (o.OilType && o.OilType.toUpperCase().includes(searchVal))
+        );
+    }
+
+    if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No oils match your search.</td></tr>';
+        return;
+    }
+
     let html = '';
-    // Oils list is exactly the 19 categories we support
-    oilList.forEach((name, i) => {
-        // Find existing record in database
-        const match = globalData.oilsList.find(o => o.OilName && o.OilName.toUpperCase().trim() === name.toUpperCase().trim()) || {};
-        
+    items.forEach(o => {
         html += `
             <tr>
-                <td style="font-weight:600; color:var(--text-primary); padding: 12px 8px;">
-                    ${name}
-                    <input type="hidden" name="oil-name-${i}" value="${name}">
-                </td>
-                <td>
-                    <input type="text" id="pl-oil-type-${i}" value="${match.OilType || ''}" style="width:100%; padding:6px; border:1px solid var(--border-color); border-radius:4px; background:var(--bg-card); color:var(--text-primary)">
-                </td>
-                <td>
-                    <input type="number" id="pl-oil-price-${i}" value="${match.Price || ''}" step="0.01" min="0" placeholder="0.00" style="width:100%; padding:6px; border:1px solid var(--border-color); border-radius:4px; background:var(--bg-card); color:var(--text-primary)">
+                <td style="font-weight:600; color:var(--text-primary); padding:10px 8px;">${o.OilName || '-'}</td>
+                <td style="padding:10px 8px;">${o.OilType || '-'}</td>
+                <td style="padding:10px 8px;">${formatCurrency(o.Price)}</td>
+                <td style="text-align:center; padding:10px 8px;">
+                    <div style="display:flex; gap:6px; justify-content:center;">
+                        <button class="btn btn-secondary" onclick='openEditOilPriceItem(${JSON.stringify(o).replace(/'/g, "&apos;")})' style="padding:4px 8px; font-size:12px;">Edit</button>
+                        <button class="btn btn-secondary" onclick="deleteOilPriceItem(${o.OilID})" style="padding:4px 8px; font-size:12px; border-color:var(--accent-rose); color:var(--accent-rose);">Delete</button>
+                    </div>
                 </td>
             </tr>`;
     });
     tbody.innerHTML = html;
-}
-
-async function saveOilsPriceList(e) {
-    e.preventDefault();
-    
-    const payload = [];
-    oilList.forEach((_, i) => {
-        const name = document.querySelector(`input[name="oil-name-${i}"]`).value;
-        const type = document.getElementById(`pl-oil-type-${i}`).value;
-        const price = parseFloat(document.getElementById(`pl-pl-oil-price-${i}`) ? document.getElementById(`pl-pl-oil-price-${i}`).value : document.getElementById(`pl-oil-price-${i}`).value) || 0.0;
-        
-        payload.push({
-            OilName: name,
-            OilType: type,
-            Price: price
-        });
-    });
-
-    try {
-        const res = await fetch('/api/oils', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const result = await res.json();
-        
-        if (result.success) {
-            alert('Oils Price List saved successfully!');
-            // Re-fetch catalog to update frontend cache
-            const catRes = await fetch('/api/catalog');
-            const catData = await catRes.json();
-            globalData.oilsList = catData.oilsList;
-        } else {
-            alert('Failed to save Oils Price List: ' + result.error);
-        }
-    } catch (err) {
-        console.error(err);
-        alert('Server error saving Oils Price List.');
-    }
 }
 
 function renderFiltersPriceList() {
@@ -99,7 +66,7 @@ function renderFiltersPriceList() {
     const searchVal = document.getElementById('pl-search').value.trim().toUpperCase();
     if (!tbody) return;
 
-    let items = globalData.filtersList;
+    let items = globalData.filtersList || [];
     if (searchVal) {
         items = items.filter(f => 
             (f.FilterCategory && f.FilterCategory.toUpperCase().includes(searchVal)) ||
@@ -131,11 +98,95 @@ function renderFiltersPriceList() {
 }
 
 function filterPriceList() {
-    if (currentPriceTab === 'filters') {
+    if (currentPriceTab === 'oils') {
+        renderOilsPriceList();
+    } else {
         renderFiltersPriceList();
     }
 }
 
+// Oils CRUD Modals & Actions
+function openAddOilItemModal() {
+    document.getElementById('oilItemForm').reset();
+    document.getElementById('oil-modal-title').textContent = 'Add Oil Price';
+    document.getElementById('oi-id').value = '';
+    openModal('oilItemModal');
+}
+
+function openEditOilPriceItem(item) {
+    document.getElementById('oil-modal-title').textContent = 'Edit Oil Price';
+    document.getElementById('oi-id').value = item.OilID;
+    document.getElementById('oi-name').value = item.OilName || '';
+    document.getElementById('oi-type').value = item.OilType || '';
+    document.getElementById('oi-price').value = item.Price || '';
+    openModal('oilItemModal');
+}
+
+async function saveOilPriceItem(e) {
+    e.preventDefault();
+    
+    const payload = {
+        OilID: document.getElementById('oi-id').value ? parseInt(document.getElementById('oi-id').value) : null,
+        OilName: document.getElementById('oi-name').value.trim(),
+        OilType: document.getElementById('oi-type').value.trim(),
+        Price: parseFloat(document.getElementById('oi-price').value) || 0.0
+    };
+
+    try {
+        const res = await fetch('/api/oils', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+            alert('Oil Price item saved successfully!');
+            closeModal('oilItemModal');
+            
+            // Re-fetch catalog to update cache
+            const catRes = await fetch('/api/catalog');
+            const catData = await catRes.json();
+            globalData.oilsList = catData.oilsList;
+            
+            renderOilsPriceList();
+        } else {
+            alert('Failed to save: ' + result.error);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Server error saving oil price item.');
+    }
+}
+
+async function deleteOilPriceItem(id) {
+    if (!confirm('Are you sure you want to delete this oil price?')) return;
+    
+    try {
+        const res = await fetch(`/api/oils/${id}`, {
+            method: 'DELETE'
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+            alert('Oil Price item deleted!');
+            
+            // Re-fetch catalog to update cache
+            const catRes = await fetch('/api/catalog');
+            const catData = await catRes.json();
+            globalData.oilsList = catData.oilsList;
+            
+            renderOilsPriceList();
+        } else {
+            alert('Failed to delete: ' + result.error);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Server error deleting oil price item.');
+    }
+}
+
+// Filters CRUD Modals & Actions
 function openAddPriceItemModal() {
     document.getElementById('priceItemForm').reset();
     document.getElementById('price-modal-title').textContent = 'Add Filter Price';

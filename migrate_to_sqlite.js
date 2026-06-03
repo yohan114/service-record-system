@@ -83,10 +83,13 @@ function insertTableRows(table, rows) {
 }
 
 const oilList = [
-  "Engine Oil", "Gear Box Oil", "Differential Oil", "Transmission Oil", "Hydraulic Oil",
-  "Torque Con. Oil", "Power Steering Oil", "Brake Oil", "Swing Motor Oil", "Travelling Motor Oil",
-  "Rear Axel Case Oil", "Front Axel Case Oil", "Circle Gear Case Oil", "Tandem Drive Oil",
-  "Compressor Oil", "Petrol & Kerosene Oil", "Grease", "Battery water", "Coolant"
+  "15W40-CI/04",
+  "DS-10 Grease",
+  "MP-140 Gear Oil",
+  "80W90 Gear Oil",
+  "MP-90 Gear Oil",
+  "HD-68 Power Oil-1888",
+  "SAE-30"
 ];
 
 async function migrate() {

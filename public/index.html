@@ -176,33 +176,32 @@
             </div>
             
             <div class="card panel">
-                <!-- Search and add filter section -->
+                <!-- Search and add filter/oil section -->
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; gap:16px;">
                     <div style="display:flex; flex:1; max-width:400px; gap:8px;">
                         <input type="text" id="pl-search" class="filter-select" placeholder="Search price list..." oninput="filterPriceList()">
                     </div>
-                    <button class="btn btn-success" id="btn-add-price-item" onclick="openAddPriceItemModal()" style="display:none;">+ Add Filter Price</button>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-success" id="btn-add-oil-item" onclick="openAddOilItemModal()">+ Add Oil Price</button>
+                        <button class="btn btn-success" id="btn-add-price-item" onclick="openAddPriceItemModal()" style="display:none;">+ Add Filter Price</button>
+                    </div>
                 </div>
                 
                 <!-- Oils List View -->
                 <div id="pl-oils-container">
-                    <form id="oils-price-form" onsubmit="saveOilsPriceList(event)">
-                        <div class="table-container">
-                            <table class="cost-table">
-                                <thead>
-                                    <tr>
-                                        <th>Oil Name</th>
-                                        <th>Default Type / Viscosity</th>
-                                        <th style="width:200px;">Price (Rs)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pl-oils-tbody"></tbody>
-                            </table>
-                        </div>
-                        <div style="margin-top:15px; display:flex; justify-content:flex-end;">
-                            <button type="submit" class="btn btn-primary">Save Oils Price List</button>
-                        </div>
-                    </form>
+                    <div class="table-container" style="max-height: 600px; overflow-y: auto;">
+                        <table class="cost-table">
+                            <thead>
+                                <tr>
+                                    <th>Oil Name / Viscosity</th>
+                                    <th>Default Type / Description</th>
+                                    <th style="width:200px;">Price (Rs)</th>
+                                    <th style="width:120px; text-align:center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pl-oils-tbody"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Filters List View -->
@@ -390,6 +389,32 @@
                 <div class="form-group" style="margin-bottom:16px;">
                     <label style="display:block; margin-bottom:4px; font-weight:600;">Price (Rs):</label>
                     <input type="number" id="pi-price" class="filter-select" style="width:100%;" step="0.01" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:10px;">Save Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit/Add Oil Price Modal -->
+    <div id="oilItemModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 id="oil-modal-title">Add/Edit Oil Price</h2>
+                <button class="btn btn-secondary" onclick="closeModal('oilItemModal')">Close</button>
+            </div>
+            <form id="oilItemForm" onsubmit="saveOilPriceItem(event)">
+                <input type="hidden" id="oi-id">
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Oil Name / Viscosity:</label>
+                    <input type="text" id="oi-name" class="filter-select" style="width:100%;" required placeholder="e.g. 15W40-CI/04">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Default Type / Description:</label>
+                    <input type="text" id="oi-type" class="filter-select" style="width:100%;" placeholder="e.g. Engine Oil">
+                </div>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Price (Rs):</label>
+                    <input type="number" id="oi-price" class="filter-select" style="width:100%;" step="0.01" required>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width:100%; padding:10px;">Save Item</button>
             </form>

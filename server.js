@@ -153,21 +153,31 @@ app.get('/api/oils', async (req, res) => {
 });
 
 app.post('/api/oils', async (req, res) => {
-    const oils = req.body; // array of { OilName, OilType, Price }
+    const { OilID, OilName, OilType, Price } = req.body;
     try {
-        await dbRun('BEGIN TRANSACTION');
-        await dbRun('DELETE FROM OilsList');
-        for (let o of oils) {
-            await dbRun('INSERT INTO OilsList (OilName, OilType, Price) VALUES (?, ?, ?)', [
-                o.OilName || '', 
-                o.OilType || '', 
-                parseFloat(o.Price) || 0.0
-            ]);
+        if (OilID) {
+            await dbRun(
+                'UPDATE OilsList SET OilName = ?, OilType = ?, Price = ? WHERE OilID = ?',
+                [OilName, OilType, parseFloat(Price) || 0.0, OilID]
+            );
+        } else {
+            await dbRun(
+                'INSERT INTO OilsList (OilName, OilType, Price) VALUES (?, ?, ?)',
+                [OilName, OilType, parseFloat(Price) || 0.0]
+            );
         }
-        await dbRun('COMMIT');
         res.json({ success: true });
     } catch (err) {
-        await dbRun('ROLLBACK').catch(() => {});
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/oils/:id', async (req, res) => {
+    const oilId = req.params.id;
+    try {
+        await dbRun('DELETE FROM OilsList WHERE OilID = ?', [oilId]);
+        res.json({ success: true });
+    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });

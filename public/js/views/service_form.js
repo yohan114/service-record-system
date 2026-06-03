@@ -26,13 +26,23 @@ function renderFormMatrices() {
         oilsHtml += `
             <div class="matrix-row">
                 <div class="matrix-cell">${oil}</div>
-                <div class="matrix-cell"><input type="text" id="oil-type-${i}"></div>
+                <div class="matrix-cell" style="position:relative; overflow:visible;">
+                    <div class="autocomplete" style="width:100%;">
+                        <input type="text" id="oil-type-${i}" autocomplete="off">
+                        <div id="oil-type-suggestions-${i}" class="autocomplete-items" style="display:none; color: var(--text-primary);"></div>
+                    </div>
+                </div>
                 <div class="matrix-cell"><input type="text" id="oil-cv-${i}" placeholder="C/V" style="text-transform:uppercase; text-align:center;"></div>
                 <div class="matrix-cell"><input type="number" id="oil-l-${i}" step="0.1" min="0"></div>
                 <div class="matrix-cell"><input type="number" id="oil-price-${i}" step="0.01" min="0"></div>
             </div>`;
     });
     oilsContainer.innerHTML = oilsHtml;
+
+    // Attach autocomplete to each oil row
+    oilList.forEach((_, i) => {
+        setupOilTypeAutocomplete(i);
+    });
 
     const filtersContainer = document.getElementById('ns-filters-container');
     let filtersHtml = '';
@@ -79,6 +89,76 @@ function renderFormMatrices() {
 
     // Auto-complete Setup
     setupVehicleSearch();
+}
+
+function setupOilTypeAutocomplete(i) {
+    const input = document.getElementById(`oil-type-${i}`);
+    const suggestionsBox = document.getElementById(`oil-type-suggestions-${i}`);
+    if (!input || !suggestionsBox) return;
+
+    const showSuggestions = () => {
+        if (isViewMode) return;
+        const query = input.value.trim().toUpperCase();
+        suggestionsBox.innerHTML = '';
+
+        let matches = [];
+        if (query) {
+            matches = (globalData.oilsList || []).filter(o => 
+                (o.OilName && o.OilName.toUpperCase().startsWith(query)) ||
+                (o.OilType && o.OilType.toUpperCase().startsWith(query))
+            );
+            if (matches.length === 0) {
+                matches = (globalData.oilsList || []).filter(o => 
+                    (o.OilName && o.OilName.toUpperCase().includes(query)) ||
+                    (o.OilType && o.OilType.toUpperCase().includes(query))
+                );
+            }
+        } else {
+            matches = globalData.oilsList || [];
+        }
+
+        if (matches.length === 0) {
+            suggestionsBox.style.display = 'none';
+            return;
+        }
+
+        matches.forEach(o => {
+            const div = document.createElement('div');
+            const name = o.OilName || '';
+            const type = o.OilType ? ` (${o.OilType})` : '';
+            const price = o.Price ? ` - Rs ${o.Price}` : '';
+            div.textContent = `${name}${type}${price}`;
+            
+            div.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+            });
+
+            div.addEventListener('click', () => {
+                input.value = o.OilName || '';
+                const priceInput = document.getElementById(`oil-price-${i}`);
+                if (priceInput) {
+                    priceInput.value = o.Price || '';
+                }
+                suggestionsBox.innerHTML = '';
+                suggestionsBox.style.display = 'none';
+                calculateServiceSheetMath();
+            });
+            suggestionsBox.appendChild(div);
+        });
+
+        suggestionsBox.style.display = 'block';
+    };
+
+    input.addEventListener('input', showSuggestions);
+    input.addEventListener('focus', showSuggestions);
+
+    // Hide suggestions on input blur
+    input.addEventListener('blur', () => {
+        setTimeout(() => {
+            suggestionsBox.innerHTML = '';
+            suggestionsBox.style.display = 'none';
+        }, 200);
+    });
 }
 
 function calculateServiceSheetMath() {
