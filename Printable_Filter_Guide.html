@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Definitive Fleet Filter Lookup Handbook</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #000000;
+            background-color: #f8fafc;
+            line-height: 1.3;
+            padding: 20px;
+        }
+
+        /* Screen view A4 container using flex-direction column to guarantee layout heights */
+        .page {
+            background: #ffffff;
+            width: 210mm;
+            min-height: 297mm; /* Changed to min-height so it expands naturally if content spills */
+            padding: 16mm 14mm;
+            margin: 20px auto;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .print-btn-container {
+            width: 210mm;
+            margin: 10px auto;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .print-btn {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s;
+        }
+        
+        .print-btn:hover {
+            background-color: #1e293b;
+        }
+
+        /* Handbook Header Block */
+        .handbook-header {
+            border-bottom: 3px solid #000000;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-shrink: 0; /* Keep header size fixed */
+        }
+
+        .header-title h1 {
+            font-size: 21px;
+            font-weight: 900;
+            color: #000000;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-title p {
+            font-size: 10.5px;
+            color: #000000;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: 10px;
+            color: #000000;
+            font-weight: 700;
+        }
+        
+        .header-meta span {
+            color: #000000;
+            font-weight: 900;
+            text-decoration: underline;
+        }
+
+        /* Flex content container holding filter cards (GUARANTEED visible overflow) */
+        .page-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow: visible; /* Fixed the hide issue: force visible so no vehicle models are cropped */
+        }
+
+        /* Filter block card */
+        .filter-card {
+            border: 1.5px solid #000000;
+            border-radius: 6px;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            overflow: visible; /* Forced visible overflow */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Filter Card Top Info Header */
+        .filter-card-header {
+            background-color: #cbd5e1;
+            border-bottom: 1.5px solid #000000;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .filter-id-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hifi-part-number {
+            font-size: 15px;
+            font-weight: 900;
+            color: #000000;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-category-badge {
+            background-color: #000000;
+            color: #ffffff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2.5px 6.5px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .filter-name-text {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #000000;
+        }
+
+        .filter-card-body {
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow: visible; /* Force body visible */
+        }
+
+        /* Cross references section */
+        .cross-ref-box {
+            font-size: 10px;
+            color: #000000;
+            padding-bottom: 4px;
+            border-bottom: 1.5px dashed #000000;
+            display: flex;
+            gap: 6px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .cross-ref-label {
+            font-weight: 900;
+            color: #000000;
+            white-space: nowrap;
+        }
+
+        /* Vehicles grid container */
+        .vehicles-section-title {
+            font-size: 9.5px;
+            font-weight: 950;
+            color: #000000;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .vehicles-count {
+            background-color: #94a3b8;
+            color: #000000;
+            padding: 1.5px 5px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 900;
+            border: 1px solid #000000;
+        }
+
+        /* Beautiful flex-wrapped vehicle tag pill layout (perfect alignment and no text clipping) */
+        .vehicles-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: flex-start;
+            align-content: flex-start;
+            overflow: visible; /* Force tags grid visible */
+        }
+
+        .vehicle-tag {
+            background-color: #f8fafc;
+            border: 1.5px solid #000000; /* Crisp thick borders */
+            border-radius: 4px;
+            font-size: 8.5px;
+            font-weight: 800; /* Heavy font weight for ultimate visibility */
+            color: #000000;
+            padding: 3px 6px; /* Increased horizontal padding for tag breathing room */
+            text-align: center;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .vehicle-tag:hover {
+            background-color: #cbd5e1;
+        }
+
+        /* Signature block */
+        .signature-area {
+            margin-top: 20px; /* Force margin spacing */
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            font-size: 10.5px;
+            font-weight: 800;
+            flex-shrink: 0;
+            page-break-inside: avoid;
+        }
+        .signature-line {
+            width: 45%;
+            border-top: 2.5px solid #000000;
+            padding-top: 5px;
+            text-align: center;
+            color: #000000;
+        }
+
+        /* Flexbox safe footer stamp */
+        .page-stamp {
+            margin-top: auto; /* Guarantee footer stays absolutely at the bottom of the page flexbox container */
+            border-top: 1.5px solid #000000;
+            padding-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: #000000;
+            font-weight: 800;
+            flex-shrink: 0; /* Keep footer size fixed */
+        }
+
+        /* Print formatting */
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                color: #000000;
+            }
+            .page {
+                width: 210mm;
+                height: 297mm; /* Force absolute page container print size */
+                padding: 16mm 14mm;
+                margin: 0;
+                box-shadow: none;
+                border-radius: 0;
+                display: flex;
+                flex-direction: column;
+                page-break-inside: avoid;
+                page-break-after: always; /* Force page break natively on the container itself */
+            }
+            .print-btn-container {
+                display: none;
+            }
+            .filter-card {
+                border-color: #000000 !important;
+                page-break-inside: avoid;
+            }
+            .filter-card-header {
+                background-color: #cbd5e1 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .vehicle-tag {
+                background-color: #ffffff !important;
+                border-color: #000000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            @page {
+                size: A4;
+                margin: 0mm; /* Explicitly reset printer margins to let container paddings control page safety */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Screen-only Print Bar -->
+    <div class="print-btn-container">
+        <button class="print-btn" onclick="window.print()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Print Handbook (A4)
+        </button>
+    </div>
+
+    <!-- BOOK PAGE 1 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📖 Definitive Fleet Filter Handbook</h1>
+                <p>Complete Reference Guide mapping HIFI Filter Part Numbers to ALL Compatible Vehicle Models</p>
+            </div>
+            <div class="header-meta">
+                Status: <span>STORE ACTIVE</span><br>
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 1: SO 10058 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SO 10058</span>
+                        <span class="filter-category-badge">oil Filter</span>
+                    </div>
+                    <span class="filter-name-text">Lube Oil Filter (Cummins 6B)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Tata 252718130145, Fleetguard LF9028, Donaldson P558615, Baldwin BD7317</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">104 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">HEX-17</div>
+                    <div class="vehicle-tag">HEX-19</div>
+                    <div class="vehicle-tag">HEX-26</div>
+                    <div class="vehicle-tag">HEX-33</div>
+                    <div class="vehicle-tag">HEX-40</div>
+                    <div class="vehicle-tag">HEX-41</div>
+                    <div class="vehicle-tag">LD-05</div>
+                    <div class="vehicle-tag">LD-8875</div>
+                    <div class="vehicle-tag">LI-3851</div>
+                    <div class="vehicle-tag">LK-2276</div>
+                    <div class="vehicle-tag">LK-2366</div>
+                    <div class="vehicle-tag">LK-5041</div>
+                    <div class="vehicle-tag">LK-5041 ( BM-05 )</div>
+                    <div class="vehicle-tag">LM-5720 (DT-34)</div>
+                    <div class="vehicle-tag">LM-7940</div>
+                    <div class="vehicle-tag">LM-7948</div>
+                    <div class="vehicle-tag">LM-7948 (DT</div>
+                    <div class="vehicle-tag">LO-1059</div>
+                    <div class="vehicle-tag">LO-4816(DT-45)</div>
+                    <div class="vehicle-tag">LO-4821 (DT-46)</div>
+                    <div class="vehicle-tag">LO-4822 (DT-42)</div>
+                    <div class="vehicle-tag">LO-4823 (DT-43)</div>
+                    <div class="vehicle-tag">LO-4823(DT-43)</div>
+                    <div class="vehicle-tag">LO-4824 ( DT - 45 )</div>
+                    <div class="vehicle-tag">LO-5981 ( DT-51 )</div>
+                    <div class="vehicle-tag">LO-5983 (DT-47)</div>
+                    <div class="vehicle-tag">LO-5983(DT-47)1615</div>
+                    <div class="vehicle-tag">LO-5983(DT-47)1618 BS3</div>
+                    <div class="vehicle-tag">LO-5984 (DT-49)</div>
+                    <div class="vehicle-tag">LO-5985 ( DT-50 )</div>
+                    <div class="vehicle-tag">LO-5986(DT-48)</div>
+                    <div class="vehicle-tag">LO-7180(DT-54)</div>
+                    <div class="vehicle-tag">LO-7181</div>
+                    <div class="vehicle-tag">LO-7181 ( DT-56 )</div>
+                    <div class="vehicle-tag">LO-7182</div>
+                    <div class="vehicle-tag">LO-7182 ( DT-55 )</div>
+                    <div class="vehicle-tag">LO-7183</div>
+                    <div class="vehicle-tag">LO-7184 (DT-57)</div>
+                    <div class="vehicle-tag">LO-8348</div>
+                    <div class="vehicle-tag">LO-8348 (DT-59)</div>
+                    <div class="vehicle-tag">LO-8349</div>
+                    <div class="vehicle-tag">LO-8349 ( DT-58 )</div>
+                    <div class="vehicle-tag">LO-8350(DT-60)</div>
+                    <div class="vehicle-tag">LP-1566</div>
+                    <div class="vehicle-tag">LP-1566 ( DT-75 )</div>
+                    <div class="vehicle-tag">LP-1567</div>
+                    <div class="vehicle-tag">LP-1568    1618</div>
+                    <div class="vehicle-tag">LP-1568 (DT-73)</div>
+                    <div class="vehicle-tag">LP-1569</div>
+                    <div class="vehicle-tag">LP-1569 (DT-68)</div>
+                    <div class="vehicle-tag">LP-1571</div>
+                    <div class="vehicle-tag">LP-1571 (DT-65)</div>
+                    <div class="vehicle-tag">LP-1572</div>
+                    <div class="vehicle-tag">LP-1572 (DT-67)</div>
+                    <div class="vehicle-tag">LP-1573 (DT-62)</div>
+                    <div class="vehicle-tag">LP-1574</div>
+                    <div class="vehicle-tag">LP-1576</div>
+                    <div class="vehicle-tag">LP-1576    1618</div>
+                    <div class="vehicle-tag">LP-1576 (DT-64)</div>
+                    <div class="vehicle-tag">LP-1577</div>
+                    <div class="vehicle-tag">LP-1577 (DT-74)</div>
+                    <div class="vehicle-tag">LP-1578</div>
+                    <div class="vehicle-tag">LP-1578 (DT-71)</div>
+                    <div class="vehicle-tag">LP-1579 ( DT-69 )</div>
+                    <div class="vehicle-tag">LP-1580 ( DT-72 )</div>
+                    <div class="vehicle-tag">LP-1581</div>
+                    <div class="vehicle-tag">LP-1581 ( DT-61 )</div>
+                    <div class="vehicle-tag">LP-1582</div>
+                    <div class="vehicle-tag">LP-1709</div>
+                    <div class="vehicle-tag">LP-1709 (DT-78)</div>
+                    <div class="vehicle-tag">LP-1710 (DT-76)</div>
+                    <div class="vehicle-tag">LP-1710 (DT-85)</div>
+                    <div class="vehicle-tag">LP-1711 (DT-84)</div>
+                    <div class="vehicle-tag">LP-1712</div>
+                    <div class="vehicle-tag">LP-1712 (DT-83)</div>
+                    <div class="vehicle-tag">LP-1713</div>
+                    <div class="vehicle-tag">LP-1713 (DT-79)</div>
+                    <div class="vehicle-tag">LP-1715 ( DT-81 )</div>
+                    <div class="vehicle-tag">LP-1716 ( DT- 82 )</div>
+                    <div class="vehicle-tag">LP-1718 ( DT-85 )</div>
+                    <div class="vehicle-tag">LP-1719</div>
+                    <div class="vehicle-tag">LP-1720 (DT-80)</div>
+                    <div class="vehicle-tag">LY-1614</div>
+                    <div class="vehicle-tag">RS-0401</div>
+                    <div class="vehicle-tag">SR-06</div>
+                    <div class="vehicle-tag">SR-12</div>
+                    <div class="vehicle-tag">SR-13</div>
+                    <div class="vehicle-tag">SR-16</div>
+                    <div class="vehicle-tag">SR-18</div>
+                    <div class="vehicle-tag">SR-19</div>
+                    <div class="vehicle-tag">SRS-02</div>
+                    <div class="vehicle-tag">SRS-03</div>
+                    <div class="vehicle-tag">ZA-0050</div>
+                    <div class="vehicle-tag">ZA-7810</div>
+                    <div class="vehicle-tag">ZA-7810 (TM-14)</div>
+                    <div class="vehicle-tag">ZA-7925 (TM</div>
+                    <div class="vehicle-tag">ZA-7925 (TM-15)</div>
+                    <div class="vehicle-tag">ZA-7925(TM-15)</div>
+                    <div class="vehicle-tag">ZA-8033</div>
+                    <div class="vehicle-tag">ZA-8033 (TM-16)</div>
+                    <div class="vehicle-tag">ZA-8445 (TM-19)</div>
+                    <div class="vehicle-tag">ZA-8511 (TM-18)</div>
+                    <div class="vehicle-tag">ZA-8511 Front engine</div>
+                    <div class="vehicle-tag">ZB-0050 (TM-21)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 1</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 2 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 2: SN 40804 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 40804</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Filter Secondary (Fine)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Tata 278607989967, Tata 278609999822, Fleetguard FF5544, FF5540, Bosch F002H24365</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">82 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">GE-05</div>
+                    <div class="vehicle-tag">LO-4816(DT-45)</div>
+                    <div class="vehicle-tag">LO-4821</div>
+                    <div class="vehicle-tag">LO-4821 (DT-46)</div>
+                    <div class="vehicle-tag">LO-4822 (DT-42)</div>
+                    <div class="vehicle-tag">LO-4823 (DT-43)</div>
+                    <div class="vehicle-tag">LO-4823(DT-43)</div>
+                    <div class="vehicle-tag">LO-4824</div>
+                    <div class="vehicle-tag">LO-4824 ( DT - 45 )</div>
+                    <div class="vehicle-tag">LO-5981</div>
+                    <div class="vehicle-tag">LO-5981 ( DT-51 )</div>
+                    <div class="vehicle-tag">LO-5983 (DT-47)</div>
+                    <div class="vehicle-tag">LO-5983(DT-47)1615</div>
+                    <div class="vehicle-tag">LO-5983(DT-47)1618 BS3</div>
+                    <div class="vehicle-tag">LO-5984 (DT-49)</div>
+                    <div class="vehicle-tag">LO-5985 ( DT-50 )</div>
+                    <div class="vehicle-tag">LO-5986(DT-48)</div>
+                    <div class="vehicle-tag">LO-7180(DT-54)</div>
+                    <div class="vehicle-tag">LO-7181</div>
+                    <div class="vehicle-tag">LO-7181 ( DT-56 )</div>
+                    <div class="vehicle-tag">LO-7182</div>
+                    <div class="vehicle-tag">LO-7182 ( DT-55 )</div>
+                    <div class="vehicle-tag">LO-7183</div>
+                    <div class="vehicle-tag">LO-7184 (DT-57)</div>
+                    <div class="vehicle-tag">LO-8348</div>
+                    <div class="vehicle-tag">LO-8348 (DT-59)</div>
+                    <div class="vehicle-tag">LO-8349</div>
+                    <div class="vehicle-tag">LO-8349 ( DT-58 )</div>
+                    <div class="vehicle-tag">LO-8350(DT-60)</div>
+                    <div class="vehicle-tag">LP-1566</div>
+                    <div class="vehicle-tag">LP-1567</div>
+                    <div class="vehicle-tag">LP-1568    1618</div>
+                    <div class="vehicle-tag">LP-1568 (DT-73)</div>
+                    <div class="vehicle-tag">LP-1569</div>
+                    <div class="vehicle-tag">LP-1569 (DT-68)</div>
+                    <div class="vehicle-tag">LP-1571</div>
+                    <div class="vehicle-tag">LP-1571 (DT-65)</div>
+                    <div class="vehicle-tag">LP-1572</div>
+                    <div class="vehicle-tag">LP-1572 (DT-67)</div>
+                    <div class="vehicle-tag">LP-1573</div>
+                    <div class="vehicle-tag">LP-1573 (DT-62)</div>
+                    <div class="vehicle-tag">LP-1574</div>
+                    <div class="vehicle-tag">LP-1576    1618</div>
+                    <div class="vehicle-tag">LP-1576 (DT-64)</div>
+                    <div class="vehicle-tag">LP-1577</div>
+                    <div class="vehicle-tag">LP-1577 (DT-74)</div>
+                    <div class="vehicle-tag">LP-1578</div>
+                    <div class="vehicle-tag">LP-1578 (DT-71)</div>
+                    <div class="vehicle-tag">LP-1579 ( DT-69 )</div>
+                    <div class="vehicle-tag">LP-1580 ( DT-72 )</div>
+                    <div class="vehicle-tag">LP-1581</div>
+                    <div class="vehicle-tag">LP-1581 ( DT-61 )</div>
+                    <div class="vehicle-tag">LP-1582</div>
+                    <div class="vehicle-tag">LP-1582 ( DT-66 )</div>
+                    <div class="vehicle-tag">LP-1582(1618 BS4)</div>
+                    <div class="vehicle-tag">LP-1709</div>
+                    <div class="vehicle-tag">LP-1709 (DT-78)</div>
+                    <div class="vehicle-tag">LP-1710</div>
+                    <div class="vehicle-tag">LP-1710 (DT-76)</div>
+                    <div class="vehicle-tag">LP-1710 (DT-85)</div>
+                    <div class="vehicle-tag">LP-1711 (DT-84)</div>
+                    <div class="vehicle-tag">LP-1712</div>
+                    <div class="vehicle-tag">LP-1712 (DT-83)</div>
+                    <div class="vehicle-tag">LP-1713</div>
+                    <div class="vehicle-tag">LP-1713 (DT-79)</div>
+                    <div class="vehicle-tag">LP-1715 ( DT-81 )</div>
+                    <div class="vehicle-tag">LP-1716 ( DT- 82 )</div>
+                    <div class="vehicle-tag">LP-1718 ( DT-85 )</div>
+                    <div class="vehicle-tag">LP-1719</div>
+                    <div class="vehicle-tag">LP-1720 (DT-80)</div>
+                    <div class="vehicle-tag">LP-1720(DT-80)</div>
+                    <div class="vehicle-tag">ZA-0050</div>
+                    <div class="vehicle-tag">ZA-7810</div>
+                    <div class="vehicle-tag">ZA-7810 (TM-14)</div>
+                    <div class="vehicle-tag">ZA-7925 (TM</div>
+                    <div class="vehicle-tag">ZA-7925 (TM-15)</div>
+                    <div class="vehicle-tag">ZA-7925(TM-15)</div>
+                    <div class="vehicle-tag">ZA-8033 (TM-16)</div>
+                    <div class="vehicle-tag">ZA-8445 (TM-19)</div>
+                    <div class="vehicle-tag">ZA-8511 (TM-18)</div>
+                    <div class="vehicle-tag">ZA-8511 Front engine</div>
+                    <div class="vehicle-tag">ZB-0050 (TM-21)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 3: SN 40541 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 40541</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Pre-Filter / Water Separator</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Tata 278609119909, Tata 220747709902, Fleetguard FS19662, FS1003, Donaldson P551103</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">77 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">LO-4816(DT-45)</div>
+                    <div class="vehicle-tag">LO-4821</div>
+                    <div class="vehicle-tag">LO-4821 (DT-46)</div>
+                    <div class="vehicle-tag">LO-4822 (DT-42)</div>
+                    <div class="vehicle-tag">LO-4823 (DT-43)</div>
+                    <div class="vehicle-tag">LO-4823(DT-43)</div>
+                    <div class="vehicle-tag">LO-4824</div>
+                    <div class="vehicle-tag">LO-4824 ( DT - 45 )</div>
+                    <div class="vehicle-tag">LO-5981</div>
+                    <div class="vehicle-tag">LO-5981 ( DT-51 )</div>
+                    <div class="vehicle-tag">LO-5983 (DT-47)</div>
+                    <div class="vehicle-tag">LO-5983(DT-47)1615</div>
+                    <div class="vehicle-tag">LO-5983(DT-47)1618 BS3</div>
+                    <div class="vehicle-tag">LO-5984 (DT-49)</div>
+                    <div class="vehicle-tag">LO-5985 ( DT-50 )</div>
+                    <div class="vehicle-tag">LO-5986(DT-48)</div>
+                    <div class="vehicle-tag">LO-7180(DT-54)</div>
+                    <div class="vehicle-tag">LO-7181</div>
+                    <div class="vehicle-tag">LO-7181 ( DT-56 )</div>
+                    <div class="vehicle-tag">LO-7182</div>
+                    <div class="vehicle-tag">LO-7182 ( DT-55 )</div>
+                    <div class="vehicle-tag">LO-7183</div>
+                    <div class="vehicle-tag">LO-7184 (DT-57)</div>
+                    <div class="vehicle-tag">LO-8348</div>
+                    <div class="vehicle-tag">LO-8348 (DT-59)</div>
+                    <div class="vehicle-tag">LO-8349</div>
+                    <div class="vehicle-tag">LO-8349 ( DT-58 )</div>
+                    <div class="vehicle-tag">LO-8350(DT-60)</div>
+                    <div class="vehicle-tag">LP-1566</div>
+                    <div class="vehicle-tag">LP-1567</div>
+                    <div class="vehicle-tag">LP-1568    1618</div>
+                    <div class="vehicle-tag">LP-1568 (DT-73)</div>
+                    <div class="vehicle-tag">LP-1569</div>
+                    <div class="vehicle-tag">LP-1569 (DT-68)</div>
+                    <div class="vehicle-tag">LP-1571</div>
+                    <div class="vehicle-tag">LP-1571 (DT-65)</div>
+                    <div class="vehicle-tag">LP-1572</div>
+                    <div class="vehicle-tag">LP-1572 (DT-67)</div>
+                    <div class="vehicle-tag">LP-1573</div>
+                    <div class="vehicle-tag">LP-1573 (DT-62)</div>
+                    <div class="vehicle-tag">LP-1574</div>
+                    <div class="vehicle-tag">LP-1576    1618</div>
+                    <div class="vehicle-tag">LP-1576 (DT-64)</div>
+                    <div class="vehicle-tag">LP-1577</div>
+                    <div class="vehicle-tag">LP-1577 (DT-74)</div>
+                    <div class="vehicle-tag">LP-1578</div>
+                    <div class="vehicle-tag">LP-1578 (DT-71)</div>
+                    <div class="vehicle-tag">LP-1579 ( DT-69 )</div>
+                    <div class="vehicle-tag">LP-1580 ( DT-72 )</div>
+                    <div class="vehicle-tag">LP-1581</div>
+                    <div class="vehicle-tag">LP-1581 ( DT-61 )</div>
+                    <div class="vehicle-tag">LP-1582</div>
+                    <div class="vehicle-tag">LP-1582 ( DT-66 )</div>
+                    <div class="vehicle-tag">LP-1709</div>
+                    <div class="vehicle-tag">LP-1709 (DT-78)</div>
+                    <div class="vehicle-tag">LP-1710</div>
+                    <div class="vehicle-tag">LP-1710 (DT-76)</div>
+                    <div class="vehicle-tag">LP-1712</div>
+                    <div class="vehicle-tag">LP-1712 (DT-83)</div>
+                    <div class="vehicle-tag">LP-1713</div>
+                    <div class="vehicle-tag">LP-1713 (DT-79)</div>
+                    <div class="vehicle-tag">LP-1715 ( DT-81 )</div>
+                    <div class="vehicle-tag">LP-1716 ( DT- 82 )</div>
+                    <div class="vehicle-tag">LP-1718 ( DT-85 )</div>
+                    <div class="vehicle-tag">LP-1719</div>
+                    <div class="vehicle-tag">LP-1720 (DT-80)</div>
+                    <div class="vehicle-tag">LP-1720(DT-80)</div>
+                    <div class="vehicle-tag">ZA-0050</div>
+                    <div class="vehicle-tag">ZA-7810</div>
+                    <div class="vehicle-tag">ZA-7810 (TM-14)</div>
+                    <div class="vehicle-tag">ZA-7925 (TM</div>
+                    <div class="vehicle-tag">ZA-7925 (TM-15)</div>
+                    <div class="vehicle-tag">ZA-7925(TM-15)</div>
+                    <div class="vehicle-tag">ZA-8033 (TM-16)</div>
+                    <div class="vehicle-tag">ZA-8445 (TM-19)</div>
+                    <div class="vehicle-tag">ZA-8511 (TM-18)</div>
+                    <div class="vehicle-tag">ZB-0050 (TM-21)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 2</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 3 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 4: SN 5052 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 5052</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Filter (Bobcat/Fleetguard)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Fleetguard FF5052, Bobcat 6667352, Baldwin BF7677</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">50 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">HEX-17</div>
+                    <div class="vehicle-tag">HEX-19</div>
+                    <div class="vehicle-tag">HEX-26</div>
+                    <div class="vehicle-tag">HEX-27</div>
+                    <div class="vehicle-tag">HEX-33</div>
+                    <div class="vehicle-tag">HEX-37</div>
+                    <div class="vehicle-tag">HEX-41</div>
+                    <div class="vehicle-tag">LC-0434</div>
+                    <div class="vehicle-tag">LC-0434 (BM-02)</div>
+                    <div class="vehicle-tag">LD-05</div>
+                    <div class="vehicle-tag">LD-8875</div>
+                    <div class="vehicle-tag">LD-8875(WB-20)</div>
+                    <div class="vehicle-tag">LI-3851</div>
+                    <div class="vehicle-tag">LI-7618 (DT-07)</div>
+                    <div class="vehicle-tag">LI-7701 (DT-09)</div>
+                    <div class="vehicle-tag">LJ-5203</div>
+                    <div class="vehicle-tag">LJ-5203 ( DT-28)</div>
+                    <div class="vehicle-tag">LK-5041</div>
+                    <div class="vehicle-tag">LM-2298 (BS</div>
+                    <div class="vehicle-tag">LM-5719 (DT-32)</div>
+                    <div class="vehicle-tag">LM-5720 (DT-34)</div>
+                    <div class="vehicle-tag">LM-5722 (DT-15)</div>
+                    <div class="vehicle-tag">LM-5723 ( DT-33 )</div>
+                    <div class="vehicle-tag">LM-7940</div>
+                    <div class="vehicle-tag">LM-7942 (DT-38)</div>
+                    <div class="vehicle-tag">LM-7948</div>
+                    <div class="vehicle-tag">LM-7949 ( DT-37 )</div>
+                    <div class="vehicle-tag">LM-7951 (DT</div>
+                    <div class="vehicle-tag">SL-02</div>
+                    <div class="vehicle-tag">SL-03</div>
+                    <div class="vehicle-tag">SL-04</div>
+                    <div class="vehicle-tag">SL-05</div>
+                    <div class="vehicle-tag">SL-06</div>
+                    <div class="vehicle-tag">SL-09</div>
+                    <div class="vehicle-tag">SL-10</div>
+                    <div class="vehicle-tag">SL-11</div>
+                    <div class="vehicle-tag">SL-12</div>
+                    <div class="vehicle-tag">SL-13</div>
+                    <div class="vehicle-tag">SL-14</div>
+                    <div class="vehicle-tag">SL-15</div>
+                    <div class="vehicle-tag">SL-16</div>
+                    <div class="vehicle-tag">SL-17</div>
+                    <div class="vehicle-tag">SL-18</div>
+                    <div class="vehicle-tag">SR-06</div>
+                    <div class="vehicle-tag">SR-13</div>
+                    <div class="vehicle-tag">SR-16</div>
+                    <div class="vehicle-tag">SR-18</div>
+                    <div class="vehicle-tag">SR-19</div>
+                    <div class="vehicle-tag">SRS-02</div>
+                    <div class="vehicle-tag">SRS-03</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 5: SO 11080 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SO 11080</span>
+                        <span class="filter-category-badge">oil Filter</span>
+                    </div>
+                    <span class="filter-name-text">Lube Oil Filter (JCB Dieselmax)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 320/04134, 320-04134, 320-04133, Fleetguard LF17556</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">34 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">LB-02(ZA-2963)</div>
+                    <div class="vehicle-tag">LB-03(ZA-2964)</div>
+                    <div class="vehicle-tag">ZA-2609 (LB-01)</div>
+                    <div class="vehicle-tag">ZA-2609(LB01)</div>
+                    <div class="vehicle-tag">ZA-2963 (LB-02)</div>
+                    <div class="vehicle-tag">ZA-2964</div>
+                    <div class="vehicle-tag">ZA-2964 (LB-03)</div>
+                    <div class="vehicle-tag">ZA-6068</div>
+                    <div class="vehicle-tag">ZA-6068 (LB-08)</div>
+                    <div class="vehicle-tag">ZA-6068(LB-08)</div>
+                    <div class="vehicle-tag">ZA-6069</div>
+                    <div class="vehicle-tag">ZA-6069 (LB-09)</div>
+                    <div class="vehicle-tag">ZA-6069(LB-09)</div>
+                    <div class="vehicle-tag">ZA-7034 (LB-10)</div>
+                    <div class="vehicle-tag">ZA-7034(LB-10)</div>
+                    <div class="vehicle-tag">ZA-7068 (LB-14)</div>
+                    <div class="vehicle-tag">ZA-7092(LB- 11)</div>
+                    <div class="vehicle-tag">ZA-7965(LB-13)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZA-8337</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB 12 )</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB-12 )</div>
+                    <div class="vehicle-tag">ZB-1521(LBS-01)</div>
+                    <div class="vehicle-tag">ZB-1546 (LB-17)</div>
+                    <div class="vehicle-tag">ZB-1546(LB-17)</div>
+                    <div class="vehicle-tag">ZB-1547</div>
+                    <div class="vehicle-tag">ZB-1547 ( LB-16 )</div>
+                    <div class="vehicle-tag">ZB-1548</div>
+                    <div class="vehicle-tag">ZB-1548 (LB-18)</div>
+                    <div class="vehicle-tag">ZB-1548(LB-18)</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1978(LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 6: T 3149 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">T 3149</span>
+                        <span class="filter-category-badge">oil Filter</span>
+                    </div>
+                    <span class="filter-name-text">Lube Oil Filter (Sakura/VIC Nissan)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Sakura C-206, VIC C-206, Mann W920/14, Fleetguard LF3435</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">33 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">GE-147</div>
+                    <div class="vehicle-tag">GE-62</div>
+                    <div class="vehicle-tag">RF-8340 (FT-12)</div>
+                    <div class="vehicle-tag">SL-02</div>
+                    <div class="vehicle-tag">SL-03</div>
+                    <div class="vehicle-tag">SL-05</div>
+                    <div class="vehicle-tag">SL-06</div>
+                    <div class="vehicle-tag">SL-10</div>
+                    <div class="vehicle-tag">SL-12</div>
+                    <div class="vehicle-tag">SL-13</div>
+                    <div class="vehicle-tag">SL-14</div>
+                    <div class="vehicle-tag">SL-15</div>
+                    <div class="vehicle-tag">SL-16</div>
+                    <div class="vehicle-tag">SL-17</div>
+                    <div class="vehicle-tag">SL-18</div>
+                    <div class="vehicle-tag">SL-24</div>
+                    <div class="vehicle-tag">SL-25</div>
+                    <div class="vehicle-tag">VR-10</div>
+                    <div class="vehicle-tag">VR-12</div>
+                    <div class="vehicle-tag">VR-14</div>
+                    <div class="vehicle-tag">VR-23</div>
+                    <div class="vehicle-tag">VR-48</div>
+                    <div class="vehicle-tag">VR-53</div>
+                    <div class="vehicle-tag">VR-54</div>
+                    <div class="vehicle-tag">VR-60</div>
+                    <div class="vehicle-tag">VR-62</div>
+                    <div class="vehicle-tag">VR-63</div>
+                    <div class="vehicle-tag">VR-64</div>
+                    <div class="vehicle-tag">VR-65</div>
+                    <div class="vehicle-tag">VR-66</div>
+                    <div class="vehicle-tag">VR-69</div>
+                    <div class="vehicle-tag">VR-70</div>
+                    <div class="vehicle-tag">VR-71</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 3</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 4 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 7: SN 70299 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 70299</span>
+                        <span class="filter-category-badge">Fuel 2(W/Sep)</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Filter (JCB Secondary)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 320/A7170, 320-07155, Fleetguard FF5794, Hengst H245WK</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">32 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">DAH-2491 ( SC-14 )</div>
+                    <div class="vehicle-tag">LB-02(ZA-2963)</div>
+                    <div class="vehicle-tag">LB-21</div>
+                    <div class="vehicle-tag">ZA-2609 (LB-01)</div>
+                    <div class="vehicle-tag">ZA-2609(LB01)</div>
+                    <div class="vehicle-tag">ZA-2963 (LB-02)</div>
+                    <div class="vehicle-tag">ZA-2964 (LB-03)</div>
+                    <div class="vehicle-tag">ZA-6068 (LB-08)</div>
+                    <div class="vehicle-tag">ZA-6068(LB-08)</div>
+                    <div class="vehicle-tag">ZA-6069 (LB-09)</div>
+                    <div class="vehicle-tag">ZA-6069(LB-09)</div>
+                    <div class="vehicle-tag">ZA-7034 (LB-10)</div>
+                    <div class="vehicle-tag">ZA-7034(LB-10)</div>
+                    <div class="vehicle-tag">ZA-7068 (LB-14)</div>
+                    <div class="vehicle-tag">ZA-7092(LB- 11)</div>
+                    <div class="vehicle-tag">ZA-7965(LB-13)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZA-8337</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB 12 )</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB-12 )</div>
+                    <div class="vehicle-tag">ZB-1521(LBS-01)</div>
+                    <div class="vehicle-tag">ZB-1546 (LB-17)</div>
+                    <div class="vehicle-tag">ZB-1546(LB-17)</div>
+                    <div class="vehicle-tag">ZB-1547</div>
+                    <div class="vehicle-tag">ZB-1547 ( LB-16 )</div>
+                    <div class="vehicle-tag">ZB-1548</div>
+                    <div class="vehicle-tag">ZB-1548 (LB-18)</div>
+                    <div class="vehicle-tag">ZB-1548(LB-18)</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1978(LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 8: SN 21035 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 21035</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Water Separator (Fleetguard)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Fleetguard FS-1275, Baldwin BF7981, Donaldson P502913</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">30 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">HEX-40</div>
+                    <div class="vehicle-tag">LC-0434 (BM-02)</div>
+                    <div class="vehicle-tag">LD-8875</div>
+                    <div class="vehicle-tag">LD-8875(WB-20)</div>
+                    <div class="vehicle-tag">LI-3395</div>
+                    <div class="vehicle-tag">LI-3851</div>
+                    <div class="vehicle-tag">LI-7618 (DT-07)</div>
+                    <div class="vehicle-tag">LI-7701 (DT-09)</div>
+                    <div class="vehicle-tag">LJ-5203</div>
+                    <div class="vehicle-tag">LJ-5203 ( DT-28)</div>
+                    <div class="vehicle-tag">LK-2366</div>
+                    <div class="vehicle-tag">LK-5041</div>
+                    <div class="vehicle-tag">LM-5719</div>
+                    <div class="vehicle-tag">LM-5719 (DT-32)</div>
+                    <div class="vehicle-tag">LM-5720 (DT-34)</div>
+                    <div class="vehicle-tag">LM-5722 (DT-15)</div>
+                    <div class="vehicle-tag">LM-5723 ( DT-33 )</div>
+                    <div class="vehicle-tag">LM-7940</div>
+                    <div class="vehicle-tag">LM-7942 (DT-38)</div>
+                    <div class="vehicle-tag">LM-7948</div>
+                    <div class="vehicle-tag">LM-7949 ( DT-37 )</div>
+                    <div class="vehicle-tag">LM-7951 (DT</div>
+                    <div class="vehicle-tag">LN-9046 ( DT-40 )</div>
+                    <div class="vehicle-tag">LO-1059</div>
+                    <div class="vehicle-tag">LO-4925</div>
+                    <div class="vehicle-tag">SR-06</div>
+                    <div class="vehicle-tag">SR-13</div>
+                    <div class="vehicle-tag">SR-16</div>
+                    <div class="vehicle-tag">SR-18</div>
+                    <div class="vehicle-tag">SR-19</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 9: SN 25132 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 25132</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Filter (Sakura Nissan)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Sakura FC-1821, Nissan 16403-J6500, VIC FC-218</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">28 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">41-1130</div>
+                    <div class="vehicle-tag">41-1130 (DB-04)</div>
+                    <div class="vehicle-tag">47-5112</div>
+                    <div class="vehicle-tag">47-5112 ( SC-15)</div>
+                    <div class="vehicle-tag">47-5112 (sc-15)</div>
+                    <div class="vehicle-tag">AC-24</div>
+                    <div class="vehicle-tag">AC-25</div>
+                    <div class="vehicle-tag">AC-27</div>
+                    <div class="vehicle-tag">AC-41</div>
+                    <div class="vehicle-tag">FL-01(Barrel fork)</div>
+                    <div class="vehicle-tag">GE-106</div>
+                    <div class="vehicle-tag">GE-66</div>
+                    <div class="vehicle-tag">HEX-05</div>
+                    <div class="vehicle-tag">HEX-21</div>
+                    <div class="vehicle-tag">HEX-28</div>
+                    <div class="vehicle-tag">LD-03</div>
+                    <div class="vehicle-tag">LD-07</div>
+                    <div class="vehicle-tag">LN-1867</div>
+                    <div class="vehicle-tag">LN-1867 ( HCC-8 )</div>
+                    <div class="vehicle-tag">MG-03</div>
+                    <div class="vehicle-tag">MG-05</div>
+                    <div class="vehicle-tag">PH-6742 (HCC-05)</div>
+                    <div class="vehicle-tag">PH-6744</div>
+                    <div class="vehicle-tag">PH-6744 ( HCC-06)</div>
+                    <div class="vehicle-tag">PH-6744(HCC-06)</div>
+                    <div class="vehicle-tag">PH-6747</div>
+                    <div class="vehicle-tag">PH-6747 (HCC-07)</div>
+                    <div class="vehicle-tag">PJ-6376 (HCC-09)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 4</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 5 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 10: SO 10029 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SO 10029</span>
+                        <span class="filter-category-badge">oil Filter</span>
+                    </div>
+                    <span class="filter-name-text">Lube Oil Filter (Fleetguard Medium)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Fleetguard LF3959, Baldwin B7177</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">28 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">LC-0434 (BM-02)</div>
+                    <div class="vehicle-tag">LD-8875(WB-20)</div>
+                    <div class="vehicle-tag">LI-7618 (DT-07)</div>
+                    <div class="vehicle-tag">LI-7620</div>
+                    <div class="vehicle-tag">LI-7701 (DT-09)</div>
+                    <div class="vehicle-tag">LJ-5203</div>
+                    <div class="vehicle-tag">LK-2366</div>
+                    <div class="vehicle-tag">LK-5041</div>
+                    <div class="vehicle-tag">LK-5041 ( BM-05 )</div>
+                    <div class="vehicle-tag">LM-5719</div>
+                    <div class="vehicle-tag">LM-5719 (DT-32)</div>
+                    <div class="vehicle-tag">LM-5720</div>
+                    <div class="vehicle-tag">LM-5720 (DT-34)</div>
+                    <div class="vehicle-tag">LM-5721</div>
+                    <div class="vehicle-tag">LM-5722 (DT-15)</div>
+                    <div class="vehicle-tag">LM-5723 ( DT-33 )</div>
+                    <div class="vehicle-tag">LM-5723 (DT</div>
+                    <div class="vehicle-tag">LM-7942</div>
+                    <div class="vehicle-tag">LM-7942 (DT-38)</div>
+                    <div class="vehicle-tag">LM-7949 ( DT-37 )</div>
+                    <div class="vehicle-tag">LM-7951</div>
+                    <div class="vehicle-tag">LM-7951 (DT</div>
+                    <div class="vehicle-tag">LO-4821</div>
+                    <div class="vehicle-tag">LO-4824</div>
+                    <div class="vehicle-tag">LO-4925</div>
+                    <div class="vehicle-tag">LO-4925 (DTS-01)</div>
+                    <div class="vehicle-tag">LO-5981</div>
+                    <div class="vehicle-tag">LO-5983(DT-47)1615</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 11: SN 70233 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 70233</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Water Separator (JCB)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 32-925994, JCB 320/A7088, Fleetguard FS19993, FS19975, Donaldson P551435</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">27 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">ZA-2609 (LB-01)</div>
+                    <div class="vehicle-tag">ZA-2609(LB01)</div>
+                    <div class="vehicle-tag">ZA-2964 (LB-03)</div>
+                    <div class="vehicle-tag">ZA-6068</div>
+                    <div class="vehicle-tag">ZA-6068 (LB-08)</div>
+                    <div class="vehicle-tag">ZA-6068(LB-08)</div>
+                    <div class="vehicle-tag">ZA-6069</div>
+                    <div class="vehicle-tag">ZA-6069 (LB-09)</div>
+                    <div class="vehicle-tag">ZA-6069(LB-09)</div>
+                    <div class="vehicle-tag">ZA-7034 (LB-10)</div>
+                    <div class="vehicle-tag">ZA-7068 (LB-14)</div>
+                    <div class="vehicle-tag">ZA-7092(LB- 11)</div>
+                    <div class="vehicle-tag">ZA-7965(LB-13)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZA-8337</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB-12 )</div>
+                    <div class="vehicle-tag">ZB-1521(LBS-01)</div>
+                    <div class="vehicle-tag">ZB-1546(LB-17)</div>
+                    <div class="vehicle-tag">ZB-1547</div>
+                    <div class="vehicle-tag">ZB-1547 ( LB-16 )</div>
+                    <div class="vehicle-tag">ZB-1548</div>
+                    <div class="vehicle-tag">ZB-1548 (LB-18)</div>
+                    <div class="vehicle-tag">ZB-1548(LB-18)</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1978(LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 12: SA 17100 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SA 17100</span>
+                        <span class="filter-category-badge">Air Outer</span>
+                    </div>
+                    <span class="filter-name-text">Air Filter Element (Outer Primary)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 32/915802, Baldwin PA-1055, Fleetguard AF26391, Donaldson P778989, Mann C15300</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">25 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">LB-02(ZA-2963)</div>
+                    <div class="vehicle-tag">LB-03(ZA-2964)</div>
+                    <div class="vehicle-tag">RS-0483(LB-05)</div>
+                    <div class="vehicle-tag">SR-08</div>
+                    <div class="vehicle-tag">ZA-2609 (LB-01)</div>
+                    <div class="vehicle-tag">ZA-2963 (LB-02)</div>
+                    <div class="vehicle-tag">ZA-2964 (LB-03)</div>
+                    <div class="vehicle-tag">ZA-6068 (LB-08)</div>
+                    <div class="vehicle-tag">ZA-6069(LB-09)</div>
+                    <div class="vehicle-tag">ZA-7034 (LB-10)</div>
+                    <div class="vehicle-tag">ZA-7034(LB-10)</div>
+                    <div class="vehicle-tag">ZA-7092(LB- 11)</div>
+                    <div class="vehicle-tag">ZA-7965(LB-13)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB 12 )</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB-12 )</div>
+                    <div class="vehicle-tag">ZB-1521(LBS-01)</div>
+                    <div class="vehicle-tag">ZB-1546(LB-17)</div>
+                    <div class="vehicle-tag">ZB-1547</div>
+                    <div class="vehicle-tag">ZB-1547 ( LB-16 )</div>
+                    <div class="vehicle-tag">ZB-1548(LB-18)</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1978(LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 5</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 6 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 13: SA 17101 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SA 17101</span>
+                        <span class="filter-category-badge">Air inner</span>
+                    </div>
+                    <span class="filter-name-text">Air Filter Element (Inner Safety)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 32/915801, Fleetguard AF26392, Donaldson P780030, Mann CF300</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">20 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">RS-0483(LB-05)</div>
+                    <div class="vehicle-tag">ZA-2609 (LB-01)</div>
+                    <div class="vehicle-tag">ZA-2963 (LB-02)</div>
+                    <div class="vehicle-tag">ZA-2964 (LB-03)</div>
+                    <div class="vehicle-tag">ZA-6068 (LB-08)</div>
+                    <div class="vehicle-tag">ZA-6069(LB-09)</div>
+                    <div class="vehicle-tag">ZA-7034 (LB-10)</div>
+                    <div class="vehicle-tag">ZA-7092(LB- 11)</div>
+                    <div class="vehicle-tag">ZA-7965(LB-13)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB 12 )</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB-12 )</div>
+                    <div class="vehicle-tag">ZB-1521(LBS-01)</div>
+                    <div class="vehicle-tag">ZB-1546(LB-17)</div>
+                    <div class="vehicle-tag">ZB-1547 ( LB-16 )</div>
+                    <div class="vehicle-tag">ZB-1548(LB-18)</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1978(LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 14: SN 40618 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 40618</span>
+                        <span class="filter-category-badge">Line filter</span>
+                    </div>
+                    <span class="filter-name-text">Glassy Fuel Strainer / Pre-Filter</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Tata 278609999920, 27860999920, Fleetguard FF552200, Bosch F002H23536</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">19 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">LC-0434</div>
+                    <div class="vehicle-tag">LC-0434 (BM-02)</div>
+                    <div class="vehicle-tag">LD-8875(WB-20)</div>
+                    <div class="vehicle-tag">LI-7701 (DT-09)</div>
+                    <div class="vehicle-tag">LJ-5203</div>
+                    <div class="vehicle-tag">LK-5041</div>
+                    <div class="vehicle-tag">LK-5041 ( BM-05 )</div>
+                    <div class="vehicle-tag">LM-5720</div>
+                    <div class="vehicle-tag">LM-5720 (DT-34)</div>
+                    <div class="vehicle-tag">LM-5721</div>
+                    <div class="vehicle-tag">LM-5721 (DT-18)</div>
+                    <div class="vehicle-tag">LM-7940</div>
+                    <div class="vehicle-tag">LM-7942</div>
+                    <div class="vehicle-tag">LM-7948</div>
+                    <div class="vehicle-tag">LM-7948 (DT</div>
+                    <div class="vehicle-tag">LM-7951</div>
+                    <div class="vehicle-tag">LO-1059</div>
+                    <div class="vehicle-tag">LY-1614</div>
+                    <div class="vehicle-tag">SR-06</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 15: SN 70242 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 70242</span>
+                        <span class="filter-category-badge">Fuel 2(W/Sep)</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Water Separator (JCB Primary)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 320/A7124, Donaldson P551434, Baldwin BF9828-D, Mann WK8169</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">18 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">ZA-2609 (LB-01)</div>
+                    <div class="vehicle-tag">ZA-2963 (LB-02)</div>
+                    <div class="vehicle-tag">ZA-6068 (LB-08)</div>
+                    <div class="vehicle-tag">ZA-6068(LB-08)</div>
+                    <div class="vehicle-tag">ZA-6069(LB-09)</div>
+                    <div class="vehicle-tag">ZA-7034 (LB-10)</div>
+                    <div class="vehicle-tag">ZA-7092(LB- 11)</div>
+                    <div class="vehicle-tag">ZA-7965(LB-13)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB 12 )</div>
+                    <div class="vehicle-tag">ZB-1521(LBS-01)</div>
+                    <div class="vehicle-tag">ZB-1546(LB-17)</div>
+                    <div class="vehicle-tag">ZB-1547 ( LB-16 )</div>
+                    <div class="vehicle-tag">ZB-1548(LB-18)</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1978(LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 16: SN 21586 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 21586</span>
+                        <span class="filter-category-badge">Fuel 2(W/Sep)</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Filter (Tata small)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Tata 278609119904</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">18 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">HEX-17</div>
+                    <div class="vehicle-tag">HEX-26</div>
+                    <div class="vehicle-tag">HEX-33</div>
+                    <div class="vehicle-tag">HEX-37</div>
+                    <div class="vehicle-tag">HEX-41</div>
+                    <div class="vehicle-tag">LM-5720 (DT-34)</div>
+                    <div class="vehicle-tag">LM-5721</div>
+                    <div class="vehicle-tag">LM-5723 (DT</div>
+                    <div class="vehicle-tag">LM-7942</div>
+                    <div class="vehicle-tag">LM-7948 (DT</div>
+                    <div class="vehicle-tag">LM-7949 ( DT-37 )</div>
+                    <div class="vehicle-tag">LO-1059</div>
+                    <div class="vehicle-tag">LY-1614</div>
+                    <div class="vehicle-tag">SR-13</div>
+                    <div class="vehicle-tag">SR-16</div>
+                    <div class="vehicle-tag">SR-19</div>
+                    <div class="vehicle-tag">SRS-03</div>
+                    <div class="vehicle-tag">VR-23</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 6</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 7 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 17: SA 16547 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SA 16547</span>
+                        <span class="filter-category-badge">Air Outer</span>
+                    </div>
+                    <span class="filter-name-text">Air Filter Element (Outer Radial)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Tata 278609139936, Bosch F002H21218, Fleetguard AF26485, Donaldson P617643, Baldwin RS5429</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">17 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">HEX-27</div>
+                    <div class="vehicle-tag">HEX-33</div>
+                    <div class="vehicle-tag">LD-8875(WB-20)</div>
+                    <div class="vehicle-tag">LI-7620</div>
+                    <div class="vehicle-tag">LM-5721 (DT-18)</div>
+                    <div class="vehicle-tag">LM-6653</div>
+                    <div class="vehicle-tag">LO-4821</div>
+                    <div class="vehicle-tag">LO-4822 (DT-42)</div>
+                    <div class="vehicle-tag">LO-5985 ( DT-50 )</div>
+                    <div class="vehicle-tag">LP-1566</div>
+                    <div class="vehicle-tag">LP-1568    1618</div>
+                    <div class="vehicle-tag">LP-1568 (DT-73)</div>
+                    <div class="vehicle-tag">LP-1574</div>
+                    <div class="vehicle-tag">LP-1580 ( DT-72 )</div>
+                    <div class="vehicle-tag">LP-1709 (DT-78)</div>
+                    <div class="vehicle-tag">LP-1710</div>
+                    <div class="vehicle-tag">LP-1712 (DT-83)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 18: SO 11020 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SO 11020</span>
+                        <span class="filter-category-badge">Gear/trans</span>
+                    </div>
+                    <span class="filter-name-text">Transmission Oil Filter (JCB)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 581/R5206, JCB 581-18076, Donaldson P959694, Mann WD920/9</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">17 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">RS-0483(LB-05)</div>
+                    <div class="vehicle-tag">ZA-2608</div>
+                    <div class="vehicle-tag">ZA-2609(LB01)</div>
+                    <div class="vehicle-tag">ZA-2964 (LB-03)</div>
+                    <div class="vehicle-tag">ZA-6068 (LB-08)</div>
+                    <div class="vehicle-tag">ZA-6069 (LB-09)</div>
+                    <div class="vehicle-tag">ZA-6069(LB-09)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZA-8337</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB 12 )</div>
+                    <div class="vehicle-tag">ZB-1521(LBS-01)</div>
+                    <div class="vehicle-tag">ZB-1546(LB-17)</div>
+                    <div class="vehicle-tag">ZB-1548</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1978(LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 19: SN 21588 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 21588</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Filter (Sakura loader)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Sakura FC-707A</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">15 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">SL-08</div>
+                    <div class="vehicle-tag">SL-24</div>
+                    <div class="vehicle-tag">SL-25</div>
+                    <div class="vehicle-tag">VR-48</div>
+                    <div class="vehicle-tag">VR-53</div>
+                    <div class="vehicle-tag">VR-54</div>
+                    <div class="vehicle-tag">VR-60</div>
+                    <div class="vehicle-tag">VR-62</div>
+                    <div class="vehicle-tag">VR-63</div>
+                    <div class="vehicle-tag">VR-65</div>
+                    <div class="vehicle-tag">VR-66</div>
+                    <div class="vehicle-tag">VR-67</div>
+                    <div class="vehicle-tag">VR-68</div>
+                    <div class="vehicle-tag">VR-69</div>
+                    <div class="vehicle-tag">VR-70</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 20: SN 324 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 324</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Filter (Sakura micro)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Sakura FC-1104</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">14 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">325-3448</div>
+                    <div class="vehicle-tag">325-3448 ( HCC-04 )</div>
+                    <div class="vehicle-tag">325-3448 (HCC-04)</div>
+                    <div class="vehicle-tag">325-3448(HCC-04)</div>
+                    <div class="vehicle-tag">40-8060</div>
+                    <div class="vehicle-tag">51-7158</div>
+                    <div class="vehicle-tag">51-8083</div>
+                    <div class="vehicle-tag">57-3062</div>
+                    <div class="vehicle-tag">LK-6738 (DT-11)</div>
+                    <div class="vehicle-tag">PA-4879</div>
+                    <div class="vehicle-tag">PA-4879 (HCC-01)</div>
+                    <div class="vehicle-tag">PA-6398</div>
+                    <div class="vehicle-tag">PA-6398 ( HCC-02 )</div>
+                    <div class="vehicle-tag">PA-6399 (HCC-03)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 7</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 8 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 21: SN 20042 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SN 20042</span>
+                        <span class="filter-category-badge">Fuel 1</span>
+                    </div>
+                    <span class="filter-name-text">Fuel Filter (Sakura secondary)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Sakura FC-1803</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">14 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">325-5120</div>
+                    <div class="vehicle-tag">325-5120 (BD-06)</div>
+                    <div class="vehicle-tag">40-2955</div>
+                    <div class="vehicle-tag">40-2955 (DB-03)</div>
+                    <div class="vehicle-tag">40-8060</div>
+                    <div class="vehicle-tag">51-7158 (PV-01)</div>
+                    <div class="vehicle-tag">51-7158(PV-01)</div>
+                    <div class="vehicle-tag">51-8083</div>
+                    <div class="vehicle-tag">57-3062</div>
+                    <div class="vehicle-tag">LK-6740 (DT-10)</div>
+                    <div class="vehicle-tag">PA-4879 (HCC-01)</div>
+                    <div class="vehicle-tag">PA-6399</div>
+                    <div class="vehicle-tag">PA-6399 (HCC-03)</div>
+                    <div class="vehicle-tag">PJ-6376 (HCC-09)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 22: SO 3349 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SO 3349</span>
+                        <span class="filter-category-badge">oil Filter</span>
+                    </div>
+                    <span class="filter-name-text">Lube Oil Filter (Cummins standard)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JS Asakashi JS-2021, Fleetguard LF3349, Donaldson P558615</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">13 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">HEX-17</div>
+                    <div class="vehicle-tag">HEX-19</div>
+                    <div class="vehicle-tag">HEX-26</div>
+                    <div class="vehicle-tag">HEX-27</div>
+                    <div class="vehicle-tag">HEX-33</div>
+                    <div class="vehicle-tag">HEX-40</div>
+                    <div class="vehicle-tag">HEX-41</div>
+                    <div class="vehicle-tag">LD-05</div>
+                    <div class="vehicle-tag">SR-11</div>
+                    <div class="vehicle-tag">SR-12</div>
+                    <div class="vehicle-tag">SR-13</div>
+                    <div class="vehicle-tag">SR-18</div>
+                    <div class="vehicle-tag">SR-19</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 23: SO 10006 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SO 10006</span>
+                        <span class="filter-category-badge">oil Filter</span>
+                    </div>
+                    <span class="filter-name-text">Lube Oil Filter (Sakura small)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Sakura C-1121</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">12 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">325-3448</div>
+                    <div class="vehicle-tag">325-3448 ( HCC-04 )</div>
+                    <div class="vehicle-tag">325-3448 (HCC-04)</div>
+                    <div class="vehicle-tag">325-3448(HCC-04)</div>
+                    <div class="vehicle-tag">40-8060</div>
+                    <div class="vehicle-tag">40-8060 ( HCC-10)</div>
+                    <div class="vehicle-tag">40-8060 (HCC-10)</div>
+                    <div class="vehicle-tag">HEX-18</div>
+                    <div class="vehicle-tag">PA-6398</div>
+                    <div class="vehicle-tag">PA-6398 ( HCC-02 )</div>
+                    <div class="vehicle-tag">PA-6399</div>
+                    <div class="vehicle-tag">PA-6399 (HCC-03)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 24: SH 59024 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SH 59024</span>
+                        <span class="filter-category-badge">Gear/trans</span>
+                    </div>
+                    <span class="filter-name-text">Hydraulic / Transmission Filter (JCB)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 581-18063, JCB 581/18063, Fleetguard HF35139, Donaldson P551756, Baldwin BT9561</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">12 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">MG-06</div>
+                    <div class="vehicle-tag">ZA-2605(LB-01)</div>
+                    <div class="vehicle-tag">ZA-6068</div>
+                    <div class="vehicle-tag">ZA-6069</div>
+                    <div class="vehicle-tag">ZA-7092(LB- 11)</div>
+                    <div class="vehicle-tag">ZA-7965(LB-13)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZB-1521(LBS-01)</div>
+                    <div class="vehicle-tag">ZB-1547 ( LB-16 )</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 8</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 9 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 25: SH 56214 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SH 56214</span>
+                        <span class="filter-category-badge">Line filter</span>
+                    </div>
+                    <span class="filter-name-text">Line Strainer (Bobcat)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Bobcat 6683101</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">12 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">SL-12</div>
+                    <div class="vehicle-tag">SL-16</div>
+                    <div class="vehicle-tag">VR-48</div>
+                    <div class="vehicle-tag">VR-54</div>
+                    <div class="vehicle-tag">VR-60</div>
+                    <div class="vehicle-tag">VR-62</div>
+                    <div class="vehicle-tag">VR-64</div>
+                    <div class="vehicle-tag">VR-65</div>
+                    <div class="vehicle-tag">VR-66</div>
+                    <div class="vehicle-tag">VR-67</div>
+                    <div class="vehicle-tag">VR-69</div>
+                    <div class="vehicle-tag">VR-70</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 26: SH 53326 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SH 53326</span>
+                        <span class="filter-category-badge">Hy. Filter</span>
+                    </div>
+                    <span class="filter-name-text">Hydraulic System Filter Element (JCB)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JCB 40/300893, JCB 40-300893</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">11 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">RS-0483(LB-05)</div>
+                    <div class="vehicle-tag">ZA-2609(LB01)</div>
+                    <div class="vehicle-tag">ZA-2964 (LB-03)</div>
+                    <div class="vehicle-tag">ZA-6069(LB-09)</div>
+                    <div class="vehicle-tag">ZA-7034(LB-10)</div>
+                    <div class="vehicle-tag">ZA-7965(LB-13)</div>
+                    <div class="vehicle-tag">ZA-7968(LB-14)</div>
+                    <div class="vehicle-tag">ZA-8337 ( LB 12 )</div>
+                    <div class="vehicle-tag">ZB-1978 (LB-19)</div>
+                    <div class="vehicle-tag">ZB-1979(LB-20)</div>
+                    <div class="vehicle-tag">ZB-1980(LB-21)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 27: SH 63919 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SH 63919</span>
+                        <span class="filter-category-badge">oil Filter</span>
+                    </div>
+                    <span class="filter-name-text">Hydraulic Cartridge Filter (JS Asakashi)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>JS Asakashi JS-1876, Fleetguard ST1876, Donaldson P171714</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">11 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">MG-08</div>
+                    <div class="vehicle-tag">MG-09</div>
+                    <div class="vehicle-tag">MG-10</div>
+                    <div class="vehicle-tag">MG-12</div>
+                    <div class="vehicle-tag">MG-13</div>
+                    <div class="vehicle-tag">MG-17</div>
+                    <div class="vehicle-tag">MG-18</div>
+                    <div class="vehicle-tag">ZB-2559 (MG-10)</div>
+                    <div class="vehicle-tag">ZB-2561 ( MG-08)</div>
+                    <div class="vehicle-tag">ZB-2562 ( MG-09 )</div>
+                    <div class="vehicle-tag">ZB-2564 (MG-12)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 28: SA 16348 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SA 16348</span>
+                        <span class="filter-category-badge">Air Outer</span>
+                    </div>
+                    <span class="filter-name-text">Air Filter Element (Bobcat outer)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Bobcat 110923009</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">9 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">325-3448</div>
+                    <div class="vehicle-tag">LN-1867 ( HCC-8 )</div>
+                    <div class="vehicle-tag">PH-6744</div>
+                    <div class="vehicle-tag">PH-6744 ( HCC-06)</div>
+                    <div class="vehicle-tag">PH-6744(HCC-06)</div>
+                    <div class="vehicle-tag">PH-6747</div>
+                    <div class="vehicle-tag">PH-6747 (HCC-07)</div>
+                    <div class="vehicle-tag">PJ-6376</div>
+                    <div class="vehicle-tag">PJ-6376 (HCC-09)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 9</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+    <!-- BOOK PAGE 10 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Part-to-Vehicle Compatibility Index (Continued)</h1>
+                <p>Full reference lookup directory for foremen and store room staff</p>
+            </div>
+            <div class="header-meta">
+                Target Brand: <span>HIFI FILTER (en-GB)</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+
+            <!-- FILTER 29: SA 12519 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SA 12519</span>
+                        <span class="filter-category-badge">Hy. Filter</span>
+                    </div>
+                    <span class="filter-name-text">Hydraulic Tank Breather Filter (Hyva)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Hyva 08102117, Hyva D8102117, Sakura A49500</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">8 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">LO-5984 (DT-49)</div>
+                    <div class="vehicle-tag">LP-1566</div>
+                    <div class="vehicle-tag">LP-1569 (DT-68)</div>
+                    <div class="vehicle-tag">LP-1572 (DT-67)</div>
+                    <div class="vehicle-tag">LP-1576</div>
+                    <div class="vehicle-tag">LP-1580 ( DT-72 )</div>
+                    <div class="vehicle-tag">LP-1712 (DT-83)</div>
+                    <div class="vehicle-tag">LP-1718 ( DT-85 )</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 30: SH 63356 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SH 63356</span>
+                        <span class="filter-category-badge">Hy. Filter</span>
+                    </div>
+                    <span class="filter-name-text">Hydraulic Return Filter Element (Hyva)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Hyva 14896991A, Donaldson P171843, MP-Filtri MF1003A25H</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">5 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">LO-8349</div>
+                    <div class="vehicle-tag">LP-1574</div>
+                    <div class="vehicle-tag">LP-1578 (DT-71)</div>
+                    <div class="vehicle-tag">LP-1709</div>
+                    <div class="vehicle-tag">LP-1710 (DT-76)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER 31: SH 66141 -->
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <div class="filter-id-box">
+                        <span class="hifi-part-number">SH 66141</span>
+                        <span class="filter-category-badge">Hy. Filter</span>
+                    </div>
+                    <span class="filter-name-text">Hydraulic Return Filter (Bobcat)</span>
+                </div>
+                <div class="filter-card-body">
+                    <div class="cross-ref-box">
+                        <span class="cross-ref-label">OEM Reference Cross:</span>
+                        <span>Bobcat 6661248</span>
+                    </div>
+                    <div class="vehicles-section-title">
+                        <span>Compatible Vehicle Models / Plate Numbers</span>
+                        <span class="vehicles-count">3 Vehicles</span>
+                    </div>
+                    <div class="vehicles-grid">
+                    <div class="vehicle-tag">S-16 Skid loader</div>
+                    <div class="vehicle-tag">SL-03</div>
+                    <div class="vehicle-tag">SL-04</div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <!-- Signature & Receipt block at the end of the booklet -->
+        <div class="signature-area">
+            <div class="signature-line">Foreman Acknowledgment Signature</div>
+            <div class="signature-line">Storekeeper (SK) Verification Signature</div>
+        </div>
+
+        <div class="page-stamp">
+            <span>Fleet Filter Catalog Handbook (2026-05)</span>
+            <span>Page 10</span>
+            <span>Workshop & Stores Official Document</span>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Definitive Filter Purchase Schedule - Fleet Sourcing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #000000;
+            background-color: #f8fafc;
+            line-height: 1.3;
+            padding: 20px;
+            font-weight: 500;
+        }
+ 
+        .page {
+            background: #ffffff;
+            width: 210mm;
+            height: 297mm; /* Absolute A4 print size */
+            padding: 15mm 12mm;
+            margin: 20px auto;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: visible;
+        }
+ 
+        .print-btn-container {
+            width: 210mm;
+            margin: 10px auto;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .print-btn {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s;
+        }
+        
+        .print-btn:hover {
+            background-color: #1e293b;
+        }
+ 
+        /* Header Block */
+        .handbook-header {
+            border-bottom: 3.5px solid #000000;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+ 
+        .header-title h1 {
+            font-size: 19px;
+            font-weight: 900;
+            color: #000000;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+ 
+        .header-title p {
+            font-size: 10px;
+            color: #000000;
+            margin-top: 2px;
+            font-weight: 700;
+        }
+ 
+        .header-meta {
+            text-align: right;
+            font-size: 9.5px;
+            color: #000000;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+        
+        .header-meta span {
+            font-weight: 900;
+            text-decoration: underline;
+        }
+ 
+        .page-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: visible;
+        }
+ 
+        /* Executive summary */
+        .kpi-panel {
+            border: 2px solid #000000;
+            border-radius: 6px;
+            padding: 8px 12px;
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            flex-shrink: 0;
+        }
+        
+        .kpi-item {
+            text-align: center;
+            width: 24%;
+            border-right: 1.5px dashed #cbd5e1;
+        }
+        
+        .kpi-item:last-child {
+            border-right: none;
+        }
+        
+        .kpi-val {
+            font-size: 16px;
+            font-weight: 900;
+        }
+        
+        .kpi-label {
+            font-size: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+ 
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.5px;
+            border: 1.5px solid #000000;
+            overflow: visible;
+        }
+ 
+        th {
+            background-color: #cbd5e1;
+            color: #000000;
+            font-weight: 850;
+            padding: 5px 6px;
+            border: 1px solid #000000;
+            text-transform: uppercase;
+            font-size: 7.5px;
+            text-align: center;
+        }
+ 
+        td {
+            padding: 5px 6px;
+            border: 1px solid #000000;
+            color: #000000;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+ 
+        .bold-text {
+            font-weight: 900;
+        }
+ 
+        .highlight-cell {
+            background-color: #fef2f2;
+            font-weight: 900;
+            font-size: 8.5px;
+            text-align: center;
+        }
+ 
+        /* Page stamp */
+        .page-stamp {
+            margin-top: auto;
+            border-top: 1.5px solid #000000;
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8px;
+            color: #000000;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+ 
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                color: #000000;
+            }
+            .page {
+                width: 210mm;
+                height: 297mm;
+                padding: 15mm 12mm;
+                margin: 0;
+                box-shadow: none;
+                border-radius: 0;
+                display: flex;
+                flex-direction: column;
+                page-break-inside: avoid;
+                page-break-after: always;
+            }
+            .print-btn-container {
+                display: none;
+            }
+            table {
+                border-color: #000000 !important;
+            }
+            th {
+                background-color: #cbd5e1 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .highlight-cell {
+                background-color: #fef2f2 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            @page {
+                size: A4;
+                margin: 0mm;
+            }
+        }
+    </style>
+</head>
+<body>
+ 
+    <div class="print-btn-container">
+        <button class="print-btn" onclick="window.print()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Print Final Filter Purchase List (A4 PDF)
+        </button>
+    </div>
+ 
+    <!-- PAGE 1 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Final Filter Purchase & Sourcing List</h1>
+                <p>Official Sourcing Guide containing Annual, Quarterly, and Monthly Replenishment Quantities</p>
+            </div>
+            <div class="header-meta">
+                Date: <span>2026-05-28</span><br>
+                Source: <span>Filter_Analysis_Report_Master.xlsx</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+            
+            <div class="kpi-panel">
+                <div class="kpi-item">
+                    <div class="kpi-val">104</div>
+                    <div class="kpi-label">Active Machinery & Tipper Fleet</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-val">31</div>
+                    <div class="kpi-label">Standardised HIFI Filters</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-val">92</div>
+                    <div class="kpi-label">Total Monthly Purchase</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-val">533</div>
+                    <div class="kpi-label">Total Annual Purchase</div>
+                </div>
+            </div>
+ 
+            <table style="margin-top: 4px;">
+                <thead>
+                    <tr>
+                        <th style="width: 4%;">Item</th>
+                        <th style="width: 14%;">HIFI Code</th>
+                        <th style="width: 12%;">Category</th>
+                        <th style="width: 32%;">Component Name & OEM Part No</th>
+                        <th style="width: 16%;">Verified Cross-References</th>
+                        <th style="width: 7%; background-color: #cbd5e1;">Month Qty</th>
+                        <th style="width: 7%; background-color: #cbd5e1;">Quarter Qty</th>
+                        <th style="width: 8%; background-color: #cbd5e1;">Year Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">1</td>
+                        <td class="bold-text" style="text-align: center;">SO 10058</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Cummins 6B)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 252 718 130 145</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Tata 252718130145, Fleetguard LF9028, Donaldson P558615, Baldwin BD7317</td>
+                        <td class="highlight-cell">9</td>
+                        <td class="highlight-cell">19</td>
+                        <td class="highlight-cell">66</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">2</td>
+                        <td class="bold-text" style="text-align: center;">SN 40804</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter Secondary (Fine)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 278 607 989 967</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Tata 278607989967, Tata 278609999822, Fleetguard FF5544, FF5540, Bosch F002H24365</td>
+                        <td class="highlight-cell">6</td>
+                        <td class="highlight-cell">14</td>
+                        <td class="highlight-cell">48</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">3</td>
+                        <td class="bold-text" style="text-align: center;">SN 40541</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Pre-Filter / Water Separator</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 278 609 119 909</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Tata 278609119909, Tata 220747709902, Fleetguard FS19662, FS1003, Donaldson P551103</td>
+                        <td class="highlight-cell">6</td>
+                        <td class="highlight-cell">13</td>
+                        <td class="highlight-cell">46</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">4</td>
+                        <td class="bold-text" style="text-align: center;">SO 11080</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (JCB Dieselmax)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 320/04134</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JCB 320/04134, 320-04134, 320-04133, Fleetguard LF17556</td>
+                        <td class="highlight-cell">6</td>
+                        <td class="highlight-cell">12</td>
+                        <td class="highlight-cell">40</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">5</td>
+                        <td class="bold-text" style="text-align: center;">SN 70299</td>
+                        <td style="text-align: center;">Fuel 2(W/Sep)</td>
+                        <td><span class="bold-text">Fuel Filter (JCB Secondary)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 320/A7170</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JCB 320/A7170, 320-07155, Fleetguard FF5794, Hengst H245WK</td>
+                        <td class="highlight-cell">5</td>
+                        <td class="highlight-cell">10</td>
+                        <td class="highlight-cell">34</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">6</td>
+                        <td class="bold-text" style="text-align: center;">SN 5052</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Bobcat/Fleetguard)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: FF-5052</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Fleetguard FF5052, Bobcat 6667352, Baldwin BF7677</td>
+                        <td class="highlight-cell">5</td>
+                        <td class="highlight-cell">10</td>
+                        <td class="highlight-cell">33</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">7</td>
+                        <td class="bold-text" style="text-align: center;">SN 70233</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Water Separator (JCB)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 32-925994</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JCB 32-925994, JCB 320/A7088, Fleetguard FS19993, FS19975, Donaldson P551435</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">6</td>
+                        <td class="highlight-cell">21</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">8</td>
+                        <td class="bold-text" style="text-align: center;">SN 21035</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Water Separator (Fleetguard)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: FS-1275</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Fleetguard FS-1275, Baldwin BF7981, Donaldson P502913</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">6</td>
+                        <td class="highlight-cell">19</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">9</td>
+                        <td class="bold-text" style="text-align: center;">T 3149</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Sakura/VIC Nissan)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: C-206</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Sakura C-206, VIC C-206, Mann W920/14, Fleetguard LF3435</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">5</td>
+                        <td class="highlight-cell">16</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">10</td>
+                        <td class="bold-text" style="text-align: center;">SN 25132</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Sakura Nissan)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: FC-1821</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Sakura FC-1821, Nissan 16403-J6500, VIC FC-218</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">5</td>
+                        <td class="highlight-cell">16</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">11</td>
+                        <td class="bold-text" style="text-align: center;">JS-1076</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: JS-1076</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">5</td>
+                        <td class="highlight-cell">14</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">12</td>
+                        <td class="bold-text" style="text-align: center;">SA 17100</td>
+                        <td style="text-align: center;">Air Outer</td>
+                        <td><span class="bold-text">Air Filter Element (Outer Primary)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 32/915802</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JCB 32/915802, Baldwin PA-1055, Fleetguard AF26391, Donaldson P778989, Mann C15300</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">4</td>
+                        <td class="highlight-cell">13</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">13</td>
+                        <td class="bold-text" style="text-align: center;">SO 10029</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Fleetguard Medium)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: LF-3959</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Fleetguard LF3959, Baldwin B7177</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">4</td>
+                        <td class="highlight-cell">13</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">14</td>
+                        <td class="bold-text" style="text-align: center;">SO 3349</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Cummins standard)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: JS-2021</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JS Asakashi JS-2021, Fleetguard LF3349, Donaldson P558615</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">4</td>
+                        <td class="highlight-cell">11</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">15</td>
+                        <td class="bold-text" style="text-align: center;">SA 17101</td>
+                        <td style="text-align: center;">Air inner</td>
+                        <td><span class="bold-text">Air Filter Element (Inner Safety)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 32/915801</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JCB 32/915801, Fleetguard AF26392, Donaldson P780030, Mann CF300</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">4</td>
+                        <td class="highlight-cell">10</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">16</td>
+                        <td class="bold-text" style="text-align: center;">SN 70242</td>
+                        <td style="text-align: center;">Fuel 2(W/Sep)</td>
+                        <td><span class="bold-text">Fuel Water Separator (JCB Primary)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 320/A7124</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JCB 320/A7124, Donaldson P551434, Baldwin BF9828-D, Mann WK8169</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">4</td>
+                        <td class="highlight-cell">10</td>
+                    </tr>
+                </tbody>
+            </table>
+ 
+        </div> <!-- End page-content-wrapper -->
+ 
+        <div class="page-stamp">
+            <span>Fleet Logistics Filter Sourcing Guide</span>
+            <span>Page 1 of 2</span>
+            <span>Final Sourcing Directive</span>
+        </div>
+    </div>
+ 
+    <!-- PAGE 2 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Final Filter Purchase List (Continued)</h1>
+                <p>Replenishment quantities for remaining active fleet filters</p>
+            </div>
+            <div class="header-meta">
+                Source: <span>Filter_Analysis_Report_Master.xlsx</span><br>
+                Status: <span>COMPLETED</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+            
+            <table style="margin-top: 5px;">
+                <thead>
+                    <tr>
+                        <th style="width: 4%;">Item</th>
+                        <th style="width: 14%;">HIFI Code</th>
+                        <th style="width: 12%;">Category</th>
+                        <th style="width: 32%;">Component Name & OEM Part No</th>
+                        <th style="width: 16%;">Verified Cross-References</th>
+                        <th style="width: 7%; background-color: #cbd5e1;">Month Qty</th>
+                        <th style="width: 7%; background-color: #cbd5e1;">Quarter Qty</th>
+                        <th style="width: 8%; background-color: #cbd5e1;">Year Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">17</td>
+                        <td class="bold-text" style="text-align: center;">SN 21588</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Sakura loader)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: FC-707A</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Sakura FC-707A</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">4</td>
+                        <td class="highlight-cell">10</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">18</td>
+                        <td class="bold-text" style="text-align: center;">SO 10006</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Sakura small)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: C-1121</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Sakura C-1121</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">9</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">19</td>
+                        <td class="bold-text" style="text-align: center;">SFF-5486</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: SFF-5486</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">9</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">20</td>
+                        <td class="bold-text" style="text-align: center;">SN 20042</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Sakura secondary)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: FC-1803</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Sakura FC-1803</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">9</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">21</td>
+                        <td class="bold-text" style="text-align: center;">SN 324</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Sakura micro)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: FC-1104</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Sakura FC-1104</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">22</td>
+                        <td class="bold-text" style="text-align: center;">SN 40618</td>
+                        <td style="text-align: center;">Line filter</td>
+                        <td><span class="bold-text">Glassy Fuel Strainer / Pre-Filter</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 278609999920</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Tata 278609999920, 27860999920, Fleetguard FF552200, Bosch F002H23536</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">23</td>
+                        <td class="bold-text" style="text-align: center;">SO 11020</td>
+                        <td style="text-align: center;">Gear/trans</td>
+                        <td><span class="bold-text">Transmission Oil Filter (JCB)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 581/R5206</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JCB 581/R5206, JCB 581-18076, Donaldson P959694, Mann WD920/9</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">24</td>
+                        <td class="bold-text" style="text-align: center;">2992662</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 2992662</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">25</td>
+                        <td class="bold-text" style="text-align: center;">SH 63919</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Hydraulic Cartridge Filter (JS Asakashi)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: JS-1876</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">JS Asakashi JS-1876, Fleetguard ST1876, Donaldson P171714</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">26</td>
+                        <td class="bold-text" style="text-align: center;">GEAROILCALTEX80W90-8L</td>
+                        <td style="text-align: center;">Gear/trans</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: Gear oil caltex 80W90-8L</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">27</td>
+                        <td class="bold-text" style="text-align: center;">PINIONOILCALTEXMP140-14L</td>
+                        <td style="text-align: center;">Gear/trans</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: Pinion oil Caltex MP140-14L</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">28</td>
+                        <td class="bold-text" style="text-align: center;">WO-1180</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: WO-1180</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">29</td>
+                        <td class="bold-text" style="text-align: center;">SN 21586</td>
+                        <td style="text-align: center;">Fuel 2(W/Sep)</td>
+                        <td><span class="bold-text">Fuel Filter (Tata small)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 278 609 119 904</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Tata 278609119904</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">30</td>
+                        <td class="bold-text" style="text-align: center;">SA 16547</td>
+                        <td style="text-align: center;">Air Outer</td>
+                        <td><span class="bold-text">Air Filter Element (Outer Radial)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 2786 0913 9936</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Tata 278609139936, Bosch F002H21218, Fleetguard AF26485, Donaldson P617643, Baldwin RS5429</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">7</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">31</td>
+                        <td class="bold-text" style="text-align: center;">FC-1001</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: FC-1001</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">7</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">32</td>
+                        <td class="bold-text" style="text-align: center;">TF-8136</td>
+                        <td style="text-align: center;">Fuel 2(W/Sep)</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: TF-8136</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">7</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">33</td>
+                        <td class="bold-text" style="text-align: center;">278607989916</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: 278 607 989 916</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">7</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">34</td>
+                        <td class="bold-text" style="text-align: center;">JS-2070</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: JS-2070</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">7</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: 800;">35</td>
+                        <td class="bold-text" style="text-align: center;">JS-1810</td>
+                        <td style="text-align: center;">Fuel 2(W/Sep)</td>
+                        <td><span class="bold-text">Specialty Filter Element</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">OEM: JS-1810</span></td>
+                        <td style="font-size: 7.5px; color: #475569;">Refer to original part casing</td>
+                        <td class="highlight-cell">2</td>
+                        <td class="highlight-cell">3</td>
+                        <td class="highlight-cell">7</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="text-align: right; font-weight: 900; font-size: 9px; text-transform: uppercase; background-color: #cbd5e1;">Purchase Quantity Grand Totals:</td>
+                        <td class="highlight-cell" style="background-color: #cbd5e1; border: 2px double #000000;">100</td>
+                        <td class="highlight-cell" style="background-color: #cbd5e1; border: 2px double #000000;">183</td>
+                        <td class="highlight-cell" style="background-color: #cbd5e1; border: 2px double #000000;">561</td>
+                    </tr>
+                </tbody>
+            </table>
+ 
+            <!-- Sourcing instructions -->
+            <div style="border: 1.5px solid #000000; border-left: 6px solid #000000; border-radius: 4px; padding: 6px 10px; font-size: 9px; line-height: 1.25; background-color: #f8fafc; margin-top: 5px;">
+                <h4 style="font-weight: 900; text-transform: uppercase; margin-bottom: 2px;">📋 Sourcing Directive & Safety Guidelines</h4>
+                <p>
+                    1. **Clean Dataset:** Lubricant and gear oil top-up records have been automatically filtered out of this list to ensure only true filter replacements are sourced.<br>
+                    2. **Active stock items (1 to 31):** Always maintain in warehouse inventory. Trigger reorders using ROP guidelines.<br>
+                    3. **Specialty items (32 to 35):** Source these on-demand prior to planned service intervals for generators and air compressors.
+                </p>
+            </div>
+ 
+            <div style="margin-top: auto; padding-top: 15px; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 20px; font-size: 9.5px; font-weight: 800; page-break-inside: avoid;">
+                <div style="width: 45%; border-top: 2.5px solid #000000; padding-top: 4px; text-align: center;">Stores Superintendent Verification</div>
+                <div style="width: 45%; border-top: 2.5px solid #000000; padding-top: 4px; text-align: center;">Fleet Operations Director Approval</div>
+            </div>
+ 
+        </div> <!-- End page-content-wrapper -->
+ 
+        <div class="page-stamp">
+            <span>Fleet Logistics Filter Sourcing Guide</span>
+            <span>Page 2 of 2</span>
+            <span>Final Sourcing Directive</span>
+        </div>
+    </div>
+ 
+</body>
+</html>

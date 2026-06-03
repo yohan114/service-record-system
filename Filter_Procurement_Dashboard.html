@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Definitive Fleet Filter Procurement Planning Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #000000;
+            background-color: #f8fafc;
+            line-height: 1.3;
+            padding: 20px;
+            font-weight: 500;
+        }
+
+        .page {
+            background: #ffffff;
+            width: 210mm;
+            height: 297mm; /* Absolute A4 print size */
+            padding: 16mm 14mm;
+            margin: 20px auto;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: visible;
+        }
+
+        .print-btn-container {
+            width: 210mm;
+            margin: 10px auto;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .print-btn {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s;
+        }
+        
+        .print-btn:hover {
+            background-color: #1e293b;
+        }
+
+        /* Header Block */
+        .handbook-header {
+            border-bottom: 3px solid #000000;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        .header-title h1 {
+            font-size: 19px;
+            font-weight: 900;
+            color: #000000;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-title p {
+            font-size: 10px;
+            color: #000000;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: 9.5px;
+            color: #000000;
+            font-weight: 700;
+        }
+        
+        .header-meta span {
+            font-weight: 900;
+            text-decoration: underline;
+        }
+
+        .page-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: visible;
+        }
+
+        /* Executive Summary Panel */
+        .summary-panel {
+            border: 2px solid #000000;
+            border-radius: 6px;
+            padding: 10px 14px;
+            background-color: #f8fafc;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 5px;
+            flex-shrink: 0;
+        }
+
+        .summary-stat {
+            text-align: center;
+            border-right: 1.5px dashed #cbd5e1;
+        }
+
+        .summary-stat:last-child {
+            border-right: none;
+        }
+
+        .stat-val {
+            font-size: 18px;
+            font-weight: 900;
+            color: #000000;
+        }
+
+        .stat-label {
+            font-size: 8.5px;
+            font-weight: 800;
+            color: #000000;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Reference block */
+        .ref-box {
+            border: 1.5px solid #000000;
+            border-left: 6px solid #000000;
+            border-radius: 4px;
+            padding: 8px 12px;
+            background-color: #f8fafc;
+            font-size: 9px;
+            line-height: 1.25;
+            color: #000000;
+            flex-shrink: 0;
+        }
+
+        .ref-box h3 {
+            font-size: 10.5px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .ref-box ul {
+            margin-left: 14px;
+        }
+
+        .ref-box li {
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.5px;
+            border: 1.5px solid #000000;
+            overflow: visible;
+        }
+
+        th {
+            background-color: #cbd5e1;
+            color: #000000;
+            font-weight: 850;
+            padding: 5px 6px;
+            border: 1px solid #000000;
+            text-transform: uppercase;
+            font-size: 8px;
+            text-align: center;
+        }
+
+        td {
+            padding: 5px 6px;
+            border: 1px solid #000000;
+            color: #000000;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+
+        .bold-text {
+            font-weight: 900;
+        }
+
+        .highlight-cell {
+            background-color: #fef2f2;
+            font-weight: 900;
+            font-size: 9px;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 1.5px 4px;
+            border-radius: 3px;
+            font-size: 7.5px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: 1px solid #000000;
+        }
+
+        .badge-a {
+            background-color: #fecaca; /* Soft red */
+        }
+
+        .badge-b {
+            background-color: #fed7aa; /* Soft orange */
+        }
+
+        .badge-c {
+            background-color: #e2e8f0; /* Soft gray */
+        }
+
+        /* Signature block */
+        .signature-area {
+            margin-top: auto;
+            padding-top: 15px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            flex-shrink: 0;
+            page-break-inside: avoid;
+        }
+
+        .signature-line {
+            width: 45%;
+            border-top: 2.5px solid #000000;
+            padding-top: 4px;
+            text-align: center;
+        }
+
+        /* Page stamp */
+        .page-stamp {
+            margin-top: auto;
+            border-top: 1.5px solid #000000;
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8.5px;
+            color: #000000;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                color: #000000;
+            }
+            .page {
+                width: 210mm;
+                height: 297mm;
+                padding: 16mm 14mm;
+                margin: 0;
+                box-shadow: none;
+                border-radius: 0;
+                display: flex;
+                flex-direction: column;
+                page-break-inside: avoid;
+                page-break-after: always;
+            }
+            .print-btn-container {
+                display: none;
+            }
+            table {
+                border-color: #000000 !important;
+            }
+            th {
+                background-color: #cbd5e1 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .highlight-cell {
+                background-color: #fef2f2 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .badge-a {
+                background-color: #fecaca !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .badge-b {
+                background-color: #fed7aa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .badge-c {
+                background-color: #e2e8f0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            @page {
+                size: A4;
+                margin: 0mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Screen-only Print Bar -->
+    <div class="print-btn-container">
+        <button class="print-btn" onclick="window.print()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Print Procurement Dashboard (A4)
+        </button>
+    </div>
+
+    <!-- PAGE 1 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📖 Fleet Filter Procurement & Forecasting Dashboard</h1>
+                <p>Calculated Inventory Stocking Rules based on 3-Year Historical Fleet Services</p>
+            </div>
+            <div class="header-meta">
+                Date: <span>2026-05-28</span><br>
+                Source: <span>1,540 Service Logs</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+            
+            <!-- Summary Stats -->
+            <div class="summary-panel">
+                <div class="summary-stat">
+                    <div class="stat-val">289</div>
+                    <div class="stat-label">Active Fleet Size</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="stat-val">31</div>
+                    <div class="stat-label">Filter Parts</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="stat-val">37.2</div>
+                    <div class="stat-label">Avg Filters / Month</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="stat-val">A: 7 | B: 15 | C: 9</div>
+                    <div class="stat-label">Priority ABC Split</div>
+                </div>
+            </div>
+
+            <!-- Reference Rules Block -->
+            <div class="ref-box">
+                <h3>🛠️ Inventory Formula & Ordering Rules</h3>
+                <ul>
+                    <li><strong>Lead Time (LT):</strong> Standardized to <strong>0.5 Months (2 Weeks)</strong> representing local sourcing/vendor turnaround time.</li>
+                    <li><strong>Safety Stock (SS):</strong> Calculated as `AMD * SS_Factor` (rounded up). Buffer levels: <strong>0.50 mo</strong> for Class A, <strong>0.30 mo</strong> for Class B, <strong>0.15 mo</strong> for Class C. Helps prevent emergency breakdowns.</li>
+                    <li><strong>Reorder Point (ROP):</strong> Calculated as `math.ceil(AMD * LT + SS)`. <em>Rule: When the physical stock in the store room drops below this quantity, immediately place a replenishment order.</em></li>
+                    <li><strong>1-Month / 3-Month Order Quantities:</strong> Calculated as `math.ceil(AMD * Cycle + SS)`. Rounded to full filter units. Represents ideal orders to minimize shipping costs and avoid surplus.</li>
+                </ul>
+            </div>
+
+            <table style="margin-top: 5px;">
+                <thead>
+                    <tr>
+                        <th style="width: 4%;">Rank</th>
+                        <th style="width: 14%;">HIFI Code</th>
+                        <th style="width: 12%;">Category</th>
+                        <th style="width: 25%;">Filter Component Description</th>
+                        <th style="width: 7%;">Vehicles</th>
+                        <th style="width: 7%;">Monthly Demand</th>
+                        <th style="width: 6%;">Safety Stock</th>
+                        <th style="width: 6%;">Reorder Point</th>
+                        <th style="width: 7%; background-color: #f1f5f9;">1-Mo Order</th>
+                        <th style="width: 7%; background-color: #f1f5f9;">3-Mo Order</th>
+                        <th style="width: 5%;">Class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="bold-text">SO 10058</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Cummins 6B)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Tata 252718130145, Fleetguard LF9028, Donaldson P558615, Baldwin BD7317</span></td>
+                        <td class="bold-text" style="text-align: center;">104</td>
+                        <td class="bold-text" style="text-align: center;">5.19</td>
+                        <td class="bold-text" style="text-align: center;">3</td>
+                        <td class="highlight-cell" style="text-align: center;">6</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">9</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">19</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">2</td>
+                        <td class="bold-text">SN 40804</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter Secondary (Fine)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Tata 278607989967, Tata 278609999822, Fleetguard FF5544, FF5540, Bosch F002H24365</span></td>
+                        <td class="bold-text" style="text-align: center;">82</td>
+                        <td class="bold-text" style="text-align: center;">3.80</td>
+                        <td class="bold-text" style="text-align: center;">2</td>
+                        <td class="highlight-cell" style="text-align: center;">4</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">6</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">14</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">3</td>
+                        <td class="bold-text">SN 40541</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Pre-Filter / Water Separator</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Tata 278609119909, Tata 220747709902, Fleetguard FS19662, FS1003, Donaldson P551103</span></td>
+                        <td class="bold-text" style="text-align: center;">77</td>
+                        <td class="bold-text" style="text-align: center;">3.66</td>
+                        <td class="bold-text" style="text-align: center;">2</td>
+                        <td class="highlight-cell" style="text-align: center;">4</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">6</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">13</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">4</td>
+                        <td class="bold-text">SO 11080</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (JCB Dieselmax)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 320/04134, 320-04134, 320-04133, Fleetguard LF17556</span></td>
+                        <td class="bold-text" style="text-align: center;">34</td>
+                        <td class="bold-text" style="text-align: center;">3.16</td>
+                        <td class="bold-text" style="text-align: center;">2</td>
+                        <td class="highlight-cell" style="text-align: center;">4</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">6</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">12</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">5</td>
+                        <td class="bold-text">SN 70299</td>
+                        <td style="text-align: center;">Fuel 2(W/Sep)</td>
+                        <td><span class="bold-text">Fuel Filter (JCB Secondary)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 320/A7170, 320-07155, Fleetguard FF5794, Hengst H245WK</span></td>
+                        <td class="bold-text" style="text-align: center;">32</td>
+                        <td class="bold-text" style="text-align: center;">2.61</td>
+                        <td class="bold-text" style="text-align: center;">2</td>
+                        <td class="highlight-cell" style="text-align: center;">4</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">5</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">10</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">6</td>
+                        <td class="bold-text">SN 5052</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Bobcat/Fleetguard)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Fleetguard FF5052, Bobcat 6667352, Baldwin BF7677</span></td>
+                        <td class="bold-text" style="text-align: center;">50</td>
+                        <td class="bold-text" style="text-align: center;">2.41</td>
+                        <td class="bold-text" style="text-align: center;">2</td>
+                        <td class="highlight-cell" style="text-align: center;">4</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">5</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">10</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">7</td>
+                        <td class="bold-text">SN 70233</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Water Separator (JCB)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 32-925994, JCB 320/A7088, Fleetguard FS19993, FS19975, Donaldson P551435</span></td>
+                        <td class="bold-text" style="text-align: center;">27</td>
+                        <td class="bold-text" style="text-align: center;">1.64</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">6</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-a">A</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">8</td>
+                        <td class="bold-text">T 3149</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Sakura/VIC Nissan)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Sakura C-206, VIC C-206, Mann W920/14, Fleetguard LF3435</span></td>
+                        <td class="bold-text" style="text-align: center;">33</td>
+                        <td class="bold-text" style="text-align: center;">1.22</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">5</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">9</td>
+                        <td class="bold-text">SN 25132</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Sakura Nissan)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Sakura FC-1821, Nissan 16403-J6500, VIC FC-218</span></td>
+                        <td class="bold-text" style="text-align: center;">28</td>
+                        <td class="bold-text" style="text-align: center;">1.19</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">5</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">10</td>
+                        <td class="bold-text">SN 21035</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Water Separator (Fleetguard)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Fleetguard FS-1275, Baldwin BF7981, Donaldson P502913</span></td>
+                        <td class="bold-text" style="text-align: center;">30</td>
+                        <td class="bold-text" style="text-align: center;">1.08</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">5</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">11</td>
+                        <td class="bold-text">SA 17100</td>
+                        <td style="text-align: center;">Air Outer</td>
+                        <td><span class="bold-text">Air Filter Element (Outer Primary)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 32/915802, Baldwin PA-1055, Fleetguard AF26391, Donaldson P778989, Mann C15300</span></td>
+                        <td class="bold-text" style="text-align: center;">25</td>
+                        <td class="bold-text" style="text-align: center;">0.94</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">4</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">12</td>
+                        <td class="bold-text">SO 10029</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Fleetguard Medium)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Fleetguard LF3959, Baldwin B7177</span></td>
+                        <td class="bold-text" style="text-align: center;">28</td>
+                        <td class="bold-text" style="text-align: center;">0.94</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">4</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">13</td>
+                        <td class="bold-text">SO 3349</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Cummins standard)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JS Asakashi JS-2021, Fleetguard LF3349, Donaldson P558615</span></td>
+                        <td class="bold-text" style="text-align: center;">13</td>
+                        <td class="bold-text" style="text-align: center;">0.78</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">4</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">14</td>
+                        <td class="bold-text">SA 17101</td>
+                        <td style="text-align: center;">Air inner</td>
+                        <td><span class="bold-text">Air Filter Element (Inner Safety)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 32/915801, Fleetguard AF26392, Donaldson P780030, Mann CF300</span></td>
+                        <td class="bold-text" style="text-align: center;">20</td>
+                        <td class="bold-text" style="text-align: center;">0.75</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">4</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Procurement & Forecast Dashboard (2026-05)</span>
+            <span>Page 1 of 2</span>
+            <span>Workshop Logistics & Stores Office</span>
+        </div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="page">
+        <div class="handbook-header">
+            <div class="header-title">
+                <h1>📋 Category-Specific Detailed Filter Index (Continued)</h1>
+                <p>Procurement stocking metrics for medium and low usage parts</p>
+            </div>
+            <div class="header-meta">
+                Date: <span>2026-05-28</span><br>
+                Status: <span>STORES ACTIVE</span>
+            </div>
+        </div>
+        
+        <div class="page-content-wrapper">
+            
+            <table style="margin-top: 5px;">
+                <thead>
+                    <tr>
+                        <th style="width: 4%;">Rank</th>
+                        <th style="width: 14%;">HIFI Code</th>
+                        <th style="width: 12%;">Category</th>
+                        <th style="width: 25%;">Filter Component Description</th>
+                        <th style="width: 7%;">Vehicles</th>
+                        <th style="width: 7%;">Monthly Demand</th>
+                        <th style="width: 6%;">Safety Stock</th>
+                        <th style="width: 6%;">Reorder Point</th>
+                        <th style="width: 7%; background-color: #f1f5f9;">1-Mo Order</th>
+                        <th style="width: 7%; background-color: #f1f5f9;">3-Mo Order</th>
+                        <th style="width: 5%;">Class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">15</td>
+                        <td class="bold-text">SN 70242</td>
+                        <td style="text-align: center;">Fuel 2(W/Sep)</td>
+                        <td><span class="bold-text">Fuel Water Separator (JCB Primary)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 320/A7124, Donaldson P551434, Baldwin BF9828-D, Mann WK8169</span></td>
+                        <td class="bold-text" style="text-align: center;">18</td>
+                        <td class="bold-text" style="text-align: center;">0.69</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">4</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">16</td>
+                        <td class="bold-text">SN 21588</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Sakura loader)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Sakura FC-707A</span></td>
+                        <td class="bold-text" style="text-align: center;">15</td>
+                        <td class="bold-text" style="text-align: center;">0.69</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">4</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">17</td>
+                        <td class="bold-text">SO 10006</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Lube Oil Filter (Sakura small)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Sakura C-1121</span></td>
+                        <td class="bold-text" style="text-align: center;">12</td>
+                        <td class="bold-text" style="text-align: center;">0.67</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">18</td>
+                        <td class="bold-text">SN 20042</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Sakura secondary)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Sakura FC-1803</span></td>
+                        <td class="bold-text" style="text-align: center;">14</td>
+                        <td class="bold-text" style="text-align: center;">0.61</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">19</td>
+                        <td class="bold-text">SN 324</td>
+                        <td style="text-align: center;">Fuel 1</td>
+                        <td><span class="bold-text">Fuel Filter (Sakura micro)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Sakura FC-1104</span></td>
+                        <td class="bold-text" style="text-align: center;">14</td>
+                        <td class="bold-text" style="text-align: center;">0.58</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">20</td>
+                        <td class="bold-text">SN 40618</td>
+                        <td style="text-align: center;">Line filter</td>
+                        <td><span class="bold-text">Glassy Fuel Strainer / Pre-Filter</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Tata 278609999920, 27860999920, Fleetguard FF552200, Bosch F002H23536</span></td>
+                        <td class="bold-text" style="text-align: center;">19</td>
+                        <td class="bold-text" style="text-align: center;">0.58</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">21</td>
+                        <td class="bold-text">SO 11020</td>
+                        <td style="text-align: center;">Gear/trans</td>
+                        <td><span class="bold-text">Transmission Oil Filter (JCB)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 581/R5206, JCB 581-18076, Donaldson P959694, Mann WD920/9</span></td>
+                        <td class="bold-text" style="text-align: center;">17</td>
+                        <td class="bold-text" style="text-align: center;">0.55</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">22</td>
+                        <td class="bold-text">SH 63919</td>
+                        <td style="text-align: center;">oil Filter</td>
+                        <td><span class="bold-text">Hydraulic Cartridge Filter (JS Asakashi)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JS Asakashi JS-1876, Fleetguard ST1876, Donaldson P171714</span></td>
+                        <td class="bold-text" style="text-align: center;">11</td>
+                        <td class="bold-text" style="text-align: center;">0.55</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-b">B</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">23</td>
+                        <td class="bold-text">SA 16547</td>
+                        <td style="text-align: center;">Air Outer</td>
+                        <td><span class="bold-text">Air Filter Element (Outer Radial)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Tata 278609139936, Bosch F002H21218, Fleetguard AF26485, Donaldson P617643, Baldwin RS5429</span></td>
+                        <td class="bold-text" style="text-align: center;">17</td>
+                        <td class="bold-text" style="text-align: center;">0.50</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">24</td>
+                        <td class="bold-text">SN 21586</td>
+                        <td style="text-align: center;">Fuel 2(W/Sep)</td>
+                        <td><span class="bold-text">Fuel Filter (Tata small)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Tata 278609119904</span></td>
+                        <td class="bold-text" style="text-align: center;">18</td>
+                        <td class="bold-text" style="text-align: center;">0.50</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">25</td>
+                        <td class="bold-text">SH 56214</td>
+                        <td style="text-align: center;">Line filter</td>
+                        <td><span class="bold-text">Line Strainer (Bobcat)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Bobcat 6683101</span></td>
+                        <td class="bold-text" style="text-align: center;">12</td>
+                        <td class="bold-text" style="text-align: center;">0.42</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">26</td>
+                        <td class="bold-text">SH 59024</td>
+                        <td style="text-align: center;">Gear/trans</td>
+                        <td><span class="bold-text">Hydraulic / Transmission Filter (JCB)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 581-18063, JCB 581/18063, Fleetguard HF35139, Donaldson P551756, Baldwin BT9561</span></td>
+                        <td class="bold-text" style="text-align: center;">12</td>
+                        <td class="bold-text" style="text-align: center;">0.39</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">3</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">27</td>
+                        <td class="bold-text">SH 53326</td>
+                        <td style="text-align: center;">Hy. Filter</td>
+                        <td><span class="bold-text">Hydraulic System Filter Element (JCB)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: JCB 40/300893, JCB 40-300893</span></td>
+                        <td class="bold-text" style="text-align: center;">11</td>
+                        <td class="bold-text" style="text-align: center;">0.33</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">28</td>
+                        <td class="bold-text">SA 16348</td>
+                        <td style="text-align: center;">Air Outer</td>
+                        <td><span class="bold-text">Air Filter Element (Bobcat outer)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Bobcat 110923009</span></td>
+                        <td class="bold-text" style="text-align: center;">9</td>
+                        <td class="bold-text" style="text-align: center;">0.31</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">29</td>
+                        <td class="bold-text">SA 12519</td>
+                        <td style="text-align: center;">Hy. Filter</td>
+                        <td><span class="bold-text">Hydraulic Tank Breather Filter (Hyva)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Hyva 08102117, Hyva D8102117, Sakura A49500</span></td>
+                        <td class="bold-text" style="text-align: center;">8</td>
+                        <td class="bold-text" style="text-align: center;">0.22</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">30</td>
+                        <td class="bold-text">SH 63356</td>
+                        <td style="text-align: center;">Hy. Filter</td>
+                        <td><span class="bold-text">Hydraulic Return Filter Element (Hyva)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Hyva 14896991A, Donaldson P171843, MP-Filtri MF1003A25H</span></td>
+                        <td class="bold-text" style="text-align: center;">5</td>
+                        <td class="bold-text" style="text-align: center;">0.14</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                    <tr>
+                        <td class="bold-text" style="text-align: center;">31</td>
+                        <td class="bold-text">SH 66141</td>
+                        <td style="text-align: center;">Hy. Filter</td>
+                        <td><span class="bold-text">Hydraulic Return Filter (Bobcat)</span><br><span style="color: #000000; font-weight: 800; font-size: 7.5px;">Cross: Bobcat 6661248</span></td>
+                        <td class="bold-text" style="text-align: center;">3</td>
+                        <td class="bold-text" style="text-align: center;">0.08</td>
+                        <td class="bold-text" style="text-align: center;">1</td>
+                        <td class="highlight-cell" style="text-align: center;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td class="bold-text" style="text-align: center; background-color: #f8fafc;">2</td>
+                        <td style="text-align: center;"><span class="priority-badge badge-c">C</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="signature-area">
+                <div class="signature-line">Prepared & Verified By: Procurement Superintendent</div>
+                <div class="signature-line">Authorized Approval By: Workshop General Manager</div>
+            </div>
+
+        </div> <!-- End page-content-wrapper -->
+
+        <div class="page-stamp">
+            <span>Fleet Procurement & Forecast Dashboard (2026-05)</span>
+            <span>Page 2 of 2</span>
+            <span>Workshop Logistics & Stores Office</span>
+        </div>
+    </div>
+
+</body>
+</html>

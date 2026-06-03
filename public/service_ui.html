@@ -1,0 +1,121 @@
+<!-- Service History Modal -->
+<div id="serviceHistoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; overflow-y:auto; padding:2rem;">
+    <div style="background:white; max-width:1200px; margin:0 auto; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.2); display:flex; flex-direction:column; min-height:80vh;">
+        
+        <!-- Header -->
+        <div style="padding:1.5rem; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f7fafc; border-radius:8px 8px 0 0;">
+            <h2 style="margin:0; font-size:1.5rem; color:#2d3748;">Service History: <span id="sh-vehicle-name"></span></h2>
+            <div>
+                <button onclick="openNewServiceSheet()" style="background:#48bb78; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; font-weight:bold; cursor:pointer; margin-right:1rem;">+ New Service Sheet</button>
+                <button onclick="document.getElementById('serviceHistoryModal').style.display='none'" style="background:#a0aec0; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; font-weight:bold; cursor:pointer;">Close</button>
+            </div>
+        </div>
+
+        <!-- History List -->
+        <div id="sh-history-list" style="padding:1.5rem; flex-grow:1; background:#edf2f7; display:flex; gap:1.5rem; flex-wrap:wrap;">
+            <!-- History cards injected here -->
+        </div>
+
+    </div>
+</div>
+
+<!-- New Service Sheet Modal (The E&C Replica) -->
+<div id="newServiceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1010; overflow-y:auto; padding:2rem;">
+    <div style="background:white; max-width:1000px; margin:0 auto; box-shadow:0 10px 25px rgba(0,0,0,0.3); border:1px solid #ccc; font-family:Arial, sans-serif;">
+        
+        <form id="serviceForm" onsubmit="submitServiceJob(event)">
+            <!-- Top Header (Edward and Christie) -->
+            <div style="text-align:center; padding:10px; border-bottom:2px solid #000;">
+                <h2 style="margin:0; font-size:1.2rem;">Edward and Christie (Pvt) Ltd</h2>
+                <h3 style="margin:5px 0 0 0; font-size:1.1rem; text-decoration:underline;">Vehicle/ Machinery Service Details</h3>
+            </div>
+
+            <!-- Header Details Grid -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; border-bottom:2px solid #000;">
+                <div style="border-right:1px solid #000; padding:10px; display:grid; gap:5px; grid-template-columns: 100px 1fr;">
+                    <label>Date:</label><input type="date" id="ns-date" required style="width:100%;">
+                    <label>Reg. ID:</label><input type="text" id="ns-regid" readonly style="background:#eee; width:100%;">
+                    <label>E&C Code:</label><input type="text" id="ns-eccode" readonly style="background:#eee; width:100%;">
+                    <label>Model:</label><input type="text" id="ns-model" readonly style="background:#eee; width:100%;">
+                </div>
+                <div style="padding:10px; display:grid; gap:5px; grid-template-columns: 120px 1fr;">
+                    <label>Job/Service No.:</label><input type="text" id="ns-jobno" required style="width:100%;">
+                    <label>Meter Reading:</label><input type="text" id="ns-meter" placeholder="e.g. 00051 Hrs" required style="width:100%;">
+                    <label>Next Service at:</label><input type="text" id="ns-nextmeter" placeholder="e.g. 00300 Hrs" style="width:100%;">
+                    <label>Service Type:</label><input type="text" id="ns-type" placeholder="e.g. 250 Hrs" style="width:100%;">
+                    <label>Location (Site):</label><input type="text" id="ns-site" style="width:100%;">
+                </div>
+            </div>
+
+            <!-- Main Matrix -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; border-bottom:2px solid #000;">
+                
+                <!-- OILS LEFT SIDE -->
+                <div style="border-right:1px solid #000;">
+                    <div style="display:grid; grid-template-columns: 150px 80px 40px 50px 60px; font-weight:bold; text-align:center; border-bottom:1px solid #000; font-size:0.8rem; background:#f0f0f0;">
+                        <div style="border-right:1px solid #ccc; padding:2px;">Oil Name</div>
+                        <div style="border-right:1px solid #ccc; padding:2px;">Type</div>
+                        <div style="border-right:1px solid #ccc; padding:2px;" title="Change/Topped up">C/V</div>
+                        <div style="border-right:1px solid #ccc; padding:2px;">Liters</div>
+                        <div style="padding:2px;">Price</div>
+                    </div>
+                    <div id="ns-oils-container">
+                        <!-- JS Will inject 19 oil rows here -->
+                    </div>
+                </div>
+
+                <!-- FILTERS RIGHT SIDE -->
+                <div>
+                    <div style="display:grid; grid-template-columns: 160px 100px 40px 80px; font-weight:bold; text-align:center; border-bottom:1px solid #000; font-size:0.8rem; background:#f0f0f0;">
+                        <div style="border-right:1px solid #ccc; padding:2px;">Filters</div>
+                        <div style="border-right:1px solid #ccc; padding:2px;">Filter No.</div>
+                        <div style="border-right:1px solid #ccc; padding:2px;" title="Replaced/Cleaned">X/E</div>
+                        <div style="padding:2px;">Filter Price</div>
+                    </div>
+                    <div id="ns-filters-container">
+                        <!-- JS Will inject 18 filter rows here -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Costs Section -->
+            <div style="padding:10px; border-bottom:2px solid #000;">
+                <div style="font-weight:bold; margin-bottom:5px;">Lubricant, Filter and Manpower cost</div>
+                <table style="width:100%; border-collapse:collapse; text-align:center; border:1px solid #000;" border="1">
+                    <tr style="background:#f0f0f0;">
+                        <th style="width:30px;">No.</th>
+                        <th>Description</th>
+                        <th style="width:80px;">Unit</th>
+                        <th style="width:100px;">Rate</th>
+                        <th style="width:80px;">Qty.</th>
+                        <th style="width:120px;">Amount</th>
+                    </tr>
+                    <tbody id="ns-costs-container">
+                        <!-- 5 rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Upkeep & Repair Details -->
+            <div style="padding:10px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
+                    <b>Up Keeping of Equipment/Vehicle</b>
+                    <label><input type="radio" name="ns-upkeep" value="Good" checked> Good - G</label>
+                    <label><input type="radio" name="ns-upkeep" value="Fair"> Fair - F</label>
+                    <label><input type="radio" name="ns-upkeep" value="Bad"> Bad - B</label>
+                </div>
+                
+                <b>Vehicle/Machinery Repair Details</b>
+                <textarea id="ns-repair" style="width:100%; height:80px; margin-top:5px; padding:5px; border:1px solid #ccc;" placeholder="Enter repair details..."></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="padding:15px; background:#f7fafc; text-align:right; border-top:1px solid #cbd5e0;">
+                <button type="button" onclick="document.getElementById('newServiceModal').style.display='none'" style="background:#a0aec0; color:white; border:none; padding:0.5rem 1rem; cursor:pointer; margin-right:10px;">Cancel</button>
+                <button type="submit" style="background:#3182ce; color:white; border:none; padding:0.5rem 1.5rem; font-weight:bold; cursor:pointer;">Save Service Job</button>
+            </div>
+        </form>
+
+    </div>
+</div>

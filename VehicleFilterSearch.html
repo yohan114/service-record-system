@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E&C Vehicle Filter Search System</title>
+    <meta name="description" content="Edward & Christie Fleet Filter Management - Search vehicle filters, prices, and compatibility">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.8);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(99, 102, 241, 0.5);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #6366f1;
+            --accent-blue-glow: rgba(99, 102, 241, 0.3);
+            --accent-cyan: #22d3ee;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #fb7185;
+            --accent-purple: #a78bfa;
+            --gradient-hero: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+            --gradient-card: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.05) 100%);
+            --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated background gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% 20%, rgba(99,102,241,0.08), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(139,92,246,0.06), transparent),
+                radial-gradient(ellipse 50% 30% at 50% 10%, rgba(34,211,238,0.04), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ======================== HEADER ======================== */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 14px 0;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-hero);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ======================== MAIN ======================== */
+        .main {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* ======================== SEARCH TABS ======================== */
+        .search-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            background: var(--bg-glass);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--border-active);
+            color: var(--text-primary);
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .tab-btn.active {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+
+        .tab-icon {
+            font-size: 16px;
+        }
+
+        /* ======================== SEARCH BOX ======================== */
+        .search-container {
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: var(--transition);
+            display: none;
+        }
+
+        .search-clear.visible {
+            display: block;
+        }
+
+        .search-clear:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+        }
+
+        /* ======================== FILTER BAR ======================== */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .filter-select option {
+            background: var(--bg-secondary);
+        }
+
+        .result-count {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .result-count strong {
+            color: var(--accent-cyan);
+        }
+
+        /* ======================== RESULTS GRID ======================== */
+        .results-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        /* ======================== VEHICLE CARD ======================== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.3s ease forwards;
+            opacity: 0;
+        }
+
+        .card:hover {
+            border-color: var(--border-active);
+            box-shadow: var(--shadow-card);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .badge-oil { background: rgba(99,102,241,0.15); color: #818cf8; }
+        .badge-fuel1 { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .badge-fuel2 { background: rgba(251,113,133,0.15); color: #fb7185; }
+        .badge-air { background: rgba(34,211,238,0.15); color: #22d3ee; }
+        .badge-hydraulic { background: rgba(52,211,153,0.15); color: #34d399; }
+        .badge-other { background: rgba(148,163,184,0.15); color: #94a3b8; }
+
+        .card-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px 20px;
+        }
+
+        .card-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-field-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .card-field-value {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .card-field-value.highlight {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .card-field-value.price {
+            color: var(--accent-green);
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* ======================== FILTER CARD ======================== */
+        .filter-details {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-glass);
+        }
+
+        .vehicle-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .vehicle-tag {
+            padding: 3px 8px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--accent-purple);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .vehicle-tag:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-blue);
+            transform: scale(1.05);
+        }
+
+        .vehicle-tag.matched {
+            background: rgba(34, 211, 153, 0.1);
+            border-color: rgba(34, 211, 153, 0.3);
+            color: var(--accent-green);
+        }
+
+        /* ======================== PRICE TABLE ======================== */
+        .price-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 12px;
+        }
+
+        .price-table th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-glass);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .price-table th:first-child { border-radius: 8px 0 0 0; }
+        .price-table th:last-child { border-radius: 0 8px 0 0; }
+
+        .price-table td {
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .price-table tr:hover td {
+            background: rgba(99, 102, 241, 0.04);
+        }
+
+        .price-table .price-val {
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        /* ======================== VEHICLE DETAIL PANEL ======================== */
+        .vehicle-filters-list {
+            margin-top: 12px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .vf-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .vf-item:hover {
+            border-color: var(--border-active);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .vf-cat {
+            font-size: 11px;
+            font-weight: 600;
+            min-width: 90px;
+        }
+
+        .vf-codes {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .vf-codes small {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .vf-price-tag {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        /* ======================== EMPTY STATE ======================== */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .empty-desc {
+            font-size: 14px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* ======================== RESPONSIVE ======================== */
+        @media (max-width: 768px) {
+            .header-inner { flex-direction: column; gap: 12px; }
+            .stats-bar { gap: 16px; }
+            .search-tabs { justify-content: center; }
+            .card-body { grid-template-columns: 1fr 1fr; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .result-count { margin-left: 0; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .card-body { grid-template-columns: 1fr; }
+            .tab-btn { padding: 8px 14px; font-size: 12px; }
+        }
+
+        /* ======================== LOADING ======================== */
+        .loading-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-glass);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ======================== SCROLL TOP ======================== */
+        .scroll-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-hero);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        /* Print styles */
+        @media print {
+            .header, .search-tabs, .search-container, .filter-bar, .scroll-top { display: none !important; }
+            body { background: white; color: black; }
+            .card { border: 1px solid #ddd; break-inside: avoid; }
+            .main { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header" id="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">🔧</div>
+                <div>
+                    <div class="logo-text">E&C Filter Search</div>
+                    <div class="logo-sub">Edward & Christie Fleet Management</div>
+                </div>
+            </div>
+            <div class="stats-bar" id="statsBar">
+                <div class="stat-item">
+                    <div class="stat-value" id="statVehicles">-</div>
+                    <div class="stat-label">Vehicles</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statFilters">-</div>
+                    <div class="stat-label">Filters</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statPrices">-</div>
+                    <div class="stat-label">Prices</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        <!-- Search Mode Tabs -->
+        <div class="search-tabs" id="searchTabs">
+            <button class="tab-btn active" data-mode="vehicle" onclick="switchMode('vehicle')">
+                <span class="tab-icon">🚛</span> Find Filters by Vehicle
+            </button>
+            <button class="tab-btn" data-mode="filter" onclick="switchMode('filter')">
+                <span class="tab-icon">🔍</span> Find Vehicles by Filter
+            </button>
+            <button class="tab-btn" data-mode="category" onclick="switchMode('category')">
+                <span class="tab-icon">📋</span> Browse by Category
+            </button>
+            <button class="tab-btn" data-mode="price" onclick="switchMode('price')">
+                <span class="tab-icon">💰</span> Price Lookup
+            </button>
+            <button class="tab-btn" data-mode="fleet" onclick="switchMode('fleet')">
+                <span class="tab-icon">🏗️</span> Full Fleet Register
+            </button>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" 
+                       placeholder="Enter vehicle E&C number, registration, or filter part number..." 
+                       autocomplete="off">
+                <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar" id="filterBar">
+            <select class="filter-select" id="categoryFilter" onchange="applyFilters()">
+                <option value="">All Categories</option>
+            </select>
+            <select class="filter-select" id="brandFilter" onchange="applyFilters()">
+                <option value="">All Brands</option>
+            </select>
+            <select class="filter-select" id="typeFilter" onchange="applyFilters()">
+                <option value="">All Vehicle Types</option>
+            </select>
+            <div class="result-count" id="resultCount"></div>
+        </div>
+
+        <!-- Results -->
+        <div class="results-grid" id="resultsGrid">
+            <div class="loading-overlay" id="loadingState">
+                <div class="spinner"></div>
+                <div style="color: var(--text-secondary);">Loading database...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scroll to Top -->
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <!-- DATA -->
+    <script src="vehicle_filter_data.js"></script>
+
+    <!-- APPLICATION LOGIC -->
+    <script>
+    // ============================================================
+    // STATE
+    // ============================================================
+    let currentMode = 'vehicle';
+    let searchTimeout = null;
+
+    // Build indexes for fast lookups
+    const vehicleById = {};
+    const vehicleByEC = {};
+    const vehicleByReg = {};
+    const filterById = {};
+    const linksByFilterId = {};
+    const linksByVehicleId = {};
+
+    function buildIndexes() {
+        DB_VEHICLES.forEach(v => {
+            vehicleById[v.id] = v;
+            if (v.ec) vehicleByEC[v.ec.toUpperCase()] = v;
+            if (v.reg) vehicleByReg[v.reg.toUpperCase()] = v;
+        });
+        DB_FILTERS.forEach(f => {
+            filterById[f.id] = f;
+        });
+        DB_VF_LINKS.forEach(l => {
+            if (!linksByFilterId[l.fid]) linksByFilterId[l.fid] = [];
+            linksByFilterId[l.fid].push(l);
+            if (l.vid > 0) {
+                if (!linksByVehicleId[l.vid]) linksByVehicleId[l.vid] = [];
+                linksByVehicleId[l.vid].push(l);
+            }
+        });
+    }
+
+    // ============================================================
+    // INITIALIZATION
+    // ============================================================
+    function init() {
+        buildIndexes();
+        populateFilterDropdowns();
+        updateStats();
+        
+        document.getElementById('searchInput').addEventListener('input', debounceSearch);
+        document.getElementById('searchInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') clearSearch();
+        });
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('scrollTop');
+            btn.classList.toggle('visible', window.scrollY > 400);
+        });
+
+        showEmptyState();
+    }
+
+    function updateStats() {
+        document.getElementById('statVehicles').textContent = DB_VEHICLES.length;
+        document.getElementById('statFilters').textContent = DB_FILTERS.length;
+        document.getElementById('statPrices').textContent = DB_PRICES.length + DB_GENUINE_PRICES.length;
+    }
+
+    function populateFilterDropdowns() {
+        // Categories
+        const cats = [...new Set(DB_FILTERS.map(f => f.cat).filter(Boolean))].sort();
+        const catSelect = document.getElementById('categoryFilter');
+        cats.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = c;
+            catSelect.appendChild(opt);
+        });
+
+        // Brands
+        const brands = [...new Set(DB_VEHICLES.map(v => v.brand).filter(Boolean))].sort();
+        const brandSelect = document.getElementById('brandFilter');
+        brands.forEach(b => {
+            const opt = document.createElement('option');
+            opt.value = b;
+            opt.textContent = b;
+            brandSelect.appendChild(opt);
+        });
+
+        // Vehicle Types
+        const types = [...new Set(DB_VEHICLES.map(v => v.type).filter(Boolean))].sort();
+        const typeSelect = document.getElementById('typeFilter');
+        types.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            typeSelect.appendChild(opt);
+        });
+    }
+
+    // ============================================================
+    // SEARCH & MODE SWITCHING
+    // ============================================================
+    function switchMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+
+        const input = document.getElementById('searchInput');
+        const filterBar = document.getElementById('filterBar');
+
+        switch(mode) {
+            case 'vehicle':
+                input.placeholder = 'Enter E&C number (e.g. LB-01, DT-57) or registration (e.g. ZA-2609)...';
+                filterBar.style.display = 'flex';
+                break;
+            case 'filter':
+                input.placeholder = 'Enter OEM part number (e.g. 320/04134) or HIFI code (e.g. SO 10058)...';
+                filterBar.style.display = 'flex';
+                break;
+            case 'category':
+                input.placeholder = 'Search within category...';
+                filterBar.style.display = 'flex';
+                break;
+            case 'price':
+                input.placeholder = 'Search filter code or description for pricing...';
+                filterBar.style.display = 'none';
+                break;
+            case 'fleet':
+                input.placeholder = 'Search fleet register by any field...';
+                filterBar.style.display = 'flex';
+                break;
+        }
+
+        performSearch();
+    }
+
+    function debounceSearch() {
+        clearTimeout(searchTimeout);
+        const val = document.getElementById('searchInput').value;
+        document.getElementById('searchClear').classList.toggle('visible', val.length > 0);
+        searchTimeout = setTimeout(performSearch, 200);
+    }
+
+    function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchClear').classList.remove('visible');
+        performSearch();
+    }
+
+    function applyFilters() {
+        performSearch();
+    }
+
+    function performSearch() {
+        const query = document.getElementById('searchInput').value.trim().toUpperCase();
+        const cat = document.getElementById('categoryFilter').value;
+        const brand = document.getElementById('brandFilter').value;
+        const vType = document.getElementById('typeFilter').value;
+
+        if (!query && !cat && !brand && !vType && currentMode !== 'fleet' && currentMode !== 'category') {
+            showEmptyState();
+            return;
+        }
+
+        let results = [];
+
+        switch(currentMode) {
+            case 'vehicle':
+                results = searchVehicles(query, brand, vType);
+                break;
+            case 'filter':
+                results = searchFilters(query, cat);
+                break;
+            case 'category':
+                results = browseByCategory(query, cat);
+                break;
+            case 'price':
+                results = searchPrices(query);
+                break;
+            case 'fleet':
+                results = searchFleet(query, brand, vType);
+                break;
+        }
+
+        renderResults(results);
+    }
+
+    // ============================================================
+    // SEARCH FUNCTIONS
+    // ============================================================
+    function searchVehicles(query, brand, vType) {
+        if (!query && !brand && !vType) return [];
+        
+        let vehicles = DB_VEHICLES.filter(v => {
+            let match = true;
+            if (query) {
+                const q = query;
+                match = (v.ec && v.ec.toUpperCase().includes(q)) ||
+                        (v.reg && v.reg.toUpperCase().includes(q)) ||
+                        (v.brand && v.brand.toUpperCase().includes(q)) ||
+                        (v.model && v.model.toUpperCase().includes(q)) ||
+                        (v.desc && v.desc.toUpperCase().includes(q)) ||
+                        (v.site && v.site.toUpperCase().includes(q));
+            }
+            if (brand && v.brand !== brand) match = false;
+            if (vType && v.type !== vType) match = false;
+            return match;
+        });
+
+        return vehicles.map(v => ({
+            type: 'vehicle-detail',
+            vehicle: v,
+            filters: getFiltersForVehicle(v.id)
+        }));
+    }
+
+    function getFiltersForVehicle(vehicleId) {
+        const links = linksByVehicleId[vehicleId] || [];
+        const filterIds = [...new Set(links.map(l => l.fid))];
+        return filterIds.map(fid => filterById[fid]).filter(Boolean);
+    }
+
+    function searchFilters(query, cat) {
+        if (!query && !cat) return [];
+        
+        let filters = DB_FILTERS.filter(f => {
+            let match = true;
+            if (query) {
+                const q = query;
+                match = (f.oem && f.oem.toUpperCase().includes(q)) ||
+                        (f.hifi && f.hifi.toUpperCase().includes(q)) ||
+                        (f.desc && f.desc.toUpperCase().includes(q)) ||
+                        (f.crossRef && f.crossRef.toUpperCase().includes(q)) ||
+                        (f.cat && f.cat.toUpperCase().includes(q));
+            }
+            if (cat && f.cat !== cat) match = false;
+            return match;
+        });
+
+        return filters.map(f => ({
+            type: 'filter-detail',
+            filter: f,
+            vehicles: getVehiclesForFilter(f.id)
+        }));
+    }
+
+    function getVehiclesForFilter(filterId) {
+        const links = linksByFilterId[filterId] || [];
+        return links.map(l => ({
+            ref: l.ref,
+            ec: l.ec,
+            vehicle: l.vid > 0 ? vehicleById[l.vid] : null
+        }));
+    }
+
+    function browseByCategory(query, cat) {
+        let filters = DB_FILTERS;
+        if (cat) filters = filters.filter(f => f.cat === cat);
+        if (query) {
+            filters = filters.filter(f => {
+                return (f.oem && f.oem.toUpperCase().includes(query)) ||
+                       (f.hifi && f.hifi.toUpperCase().includes(query)) ||
+                       (f.desc && f.desc.toUpperCase().includes(query));
+            });
+        }
+        
+        return filters.slice(0, 100).map(f => ({
+            type: 'filter-detail',
+            filter: f,
+            vehicles: getVehiclesForFilter(f.id)
+        }));
+    }
+
+    function searchPrices(query) {
+        let supplierResults = DB_PRICES;
+        let genuineResults = DB_GENUINE_PRICES;
+
+        if (query) {
+            supplierResults = supplierResults.filter(p => 
+                (p.code && p.code.toUpperCase().includes(query)) ||
+                (p.desc && p.desc.toUpperCase().includes(query))
+            );
+            genuineResults = genuineResults.filter(p =>
+                (p.hifi && p.hifi.toUpperCase().includes(query)) ||
+                (p.brand && p.brand.toUpperCase().includes(query))
+            );
+        }
+
+        return [
+            { type: 'price-table', title: 'Supplier Prices', prices: supplierResults },
+            { type: 'genuine-price-table', title: 'Genuine/OEM Prices', prices: genuineResults }
+        ];
+    }
+
+    function searchFleet(query, brand, vType) {
+        let vehicles = DB_VEHICLES;
+        
+        if (query) {
+            vehicles = vehicles.filter(v => {
+                return Object.values(v).some(val => 
+                    val && String(val).toUpperCase().includes(query)
+                );
+            });
+        }
+        if (brand) vehicles = vehicles.filter(v => v.brand === brand);
+        if (vType) vehicles = vehicles.filter(v => v.type === vType);
+
+        return vehicles.slice(0, 200).map(v => ({
+            type: 'fleet-row',
+            vehicle: v,
+            filterCount: (linksByVehicleId[v.id] || []).length
+        }));
+    }
+
+    // ============================================================
+    // RENDERING
+    // ============================================================
+    function renderResults(results) {
+        const grid = document.getElementById('resultsGrid');
+        const countEl = document.getElementById('resultCount');
+
+        if (!results || results.length === 0) {
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <div class="empty-title">No results found</div>
+                    <div class="empty-desc">Try a different search term or adjust your filters</div>
+                </div>`;
+            countEl.innerHTML = '';
+            return;
+        }
+
+        let totalCount = 0;
+        let html = '';
+
+        results.forEach((r, idx) => {
+            const delay = Math.min(idx * 30, 300);
+            switch(r.type) {
+                case 'vehicle-detail':
+                    html += renderVehicleDetailCard(r.vehicle, r.filters, delay);
+                    totalCount++;
+                    break;
+                case 'filter-detail':
+                    html += renderFilterDetailCard(r.filter, r.vehicles, delay);
+                    totalCount++;
+                    break;
+                case 'price-table':
+                    html += renderPriceTable(r.title, r.prices, 'supplier', delay);
+                    totalCount += r.prices.length;
+                    break;
+                case 'genuine-price-table':
+                    html += renderPriceTable(r.title, r.prices, 'genuine', delay);
+                    totalCount += r.prices.length;
+                    break;
+                case 'fleet-row':
+                    html += renderFleetCard(r.vehicle, r.filterCount, delay);
+                    totalCount++;
+                    break;
+            }
+        });
+
+        grid.innerHTML = html;
+        countEl.innerHTML = `Showing <strong>${totalCount}</strong> result${totalCount !== 1 ? 's' : ''}`;
+    }
+
+    function getCategoryBadge(cat) {
+        const c = (cat || '').toLowerCase();
+        if (c.includes('oil')) return 'badge-oil';
+        if (c.includes('fuel 1') || c === 'fuel 1') return 'badge-fuel1';
+        if (c.includes('fuel 2') || c.includes('w/sep')) return 'badge-fuel2';
+        if (c.includes('air')) return 'badge-air';
+        if (c.includes('hydraulic')) return 'badge-hydraulic';
+        return 'badge-other';
+    }
+
+    function formatPrice(val) {
+        if (!val || val === 0) return '-';
+        return 'LKR ' + Number(val).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderVehicleDetailCard(v, filters, delay) {
+        let filtersHtml = '';
+        if (filters.length > 0) {
+            filtersHtml = '<div class="filter-details"><div class="card-field-label">Required Filters (' + filters.length + ')</div><div class="vehicle-filters-list">';
+            filters.forEach(f => {
+                // Find price if available
+                let priceStr = '';
+                const priceMatch = DB_PRICES.find(p => 
+                    p.code && (p.code.toUpperCase().includes(f.oem.toUpperCase()) || p.code.toUpperCase().includes(f.hifi.toUpperCase()))
+                );
+                if (priceMatch) {
+                    priceStr = '<span class="vf-price-tag">' + formatPrice(priceMatch.unit) + '</span>';
+                }
+
+                filtersHtml += `
+                    <div class="vf-item" onclick="searchFilter('${escapeHtml(f.oem)}')">
+                        <span class="vf-cat badge ${getCategoryBadge(f.cat)}">${escapeHtml(f.cat)}</span>
+                        <div class="vf-codes">
+                            ${escapeHtml(f.oem)} <small>→ HIFI: ${escapeHtml(f.hifi)}</small>
+                        </div>
+                        ${priceStr}
+                    </div>`;
+            });
+            filtersHtml += '</div></div>';
+        } else {
+            filtersHtml = '<div class="filter-details"><div class="card-field-label" style="color:var(--accent-amber)">⚠ No filters linked in database</div></div>';
+        }
+
+        return `
+        <div class="card" style="animation-delay:${delay}ms">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(v.ec)} — ${escapeHtml(v.desc || v.type)}</div>
+                    <div class="card-subtitle">${escapeHtml(v.brand)} ${escapeHtml(v.model)} • ${escapeHtml(v.reg)} • Year: ${escapeHtml(v.year)}</div>
+                </div>
+                <span class="badge badge-other">${escapeHtml(v.type || 'Vehicle')}</span>
+            </div>
+            <div class="card-body">
+                <div class="card-field"><div class="card-field-label">E&C Number</div><div class="card-field-value highlight">${escapeHtml(v.ec)}</div></div>
+                <div class="card-field"><div class="card-field-label">Registration</div><div class="card-field-value">${escapeHtml(v.reg)}</div></div>
+                <div class="card-field"><div class="card-field-label">Brand / Model</div><div class="card-field-value">${escapeHtml(v.brand)} ${escapeHtml(v.model)}</div></div>
+                <div class="card-field"><div class="card-field-label">Capacity</div><div class="card-field-value">${escapeHtml(v.cap)}</div></div>
+                <div class="card-field"><div class="card-field-label">Site</div><div class="card-field-value">${escapeHtml(v.site)}</div></div>
+                <div class="card-field"><div class="card-field-label">Serial No</div><div class="card-field-value">${escapeHtml(v.serial)}</div></div>
+            </div>
+            ${filtersHtml}
+        </div>`;
+    }
+
+    function renderFilterDetailCard(f, vehicles, delay) {
+        // Price info
+        let priceHtml = '';
+        const priceMatch = DB_PRICES.find(p => 
+            p.code && (p.code.toUpperCase().includes(f.oem.toUpperCase()) || 
+                       p.desc.toUpperCase().includes(f.hifi.toUpperCase()))
+        );
+        const genuineMatch = DB_GENUINE_PRICES.find(g =>
+            g.hifi && g.hifi.toUpperCase().includes(f.hifi.toUpperCase())
+        );
+
+        if (priceMatch || genuineMatch) {
+            priceHtml = '<div style="display:flex;gap:16px;margin-top:8px;">';
+            if (priceMatch) priceHtml += `<div class="card-field"><div class="card-field-label">Supplier Price</div><div class="card-field-value price">${formatPrice(priceMatch.unit)}</div></div>`;
+            if (genuineMatch) priceHtml += `<div class="card-field"><div class="card-field-label">Genuine Price (incl VAT)</div><div class="card-field-value price">${formatPrice(genuineMatch.sourcing)}</div></div>`;
+            priceHtml += '</div>';
+        }
+
+        // Vehicle tags
+        let vehicleTagsHtml = '';
+        if (vehicles.length > 0) {
+            vehicleTagsHtml = `<div class="filter-details"><div class="card-field-label">Compatible Vehicles (${vehicles.length})</div><div class="vehicle-tags">`;
+            vehicles.forEach(vl => {
+                const cls = vl.vehicle ? 'vehicle-tag matched' : 'vehicle-tag';
+                const title = vl.vehicle ? `${vl.vehicle.brand} ${vl.vehicle.model} - ${vl.vehicle.type}` : 'Not in fleet register';
+                const onclick = vl.vehicle ? `onclick="searchVehicle('${escapeHtml(vl.vehicle.ec)}')"` : '';
+                vehicleTagsHtml += `<span class="${cls}" title="${title}" ${onclick}>${escapeHtml(vl.ref || vl.ec)}</span>`;
+            });
+            vehicleTagsHtml += '</div></div>';
+        }
+
+        return `
+        <div class="card" style="animation-delay:${delay}ms">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(f.oem)} → ${escapeHtml(f.hifi)}</div>
+                    <div class="card-subtitle">${escapeHtml(f.desc)}</div>
+                </div>
+                <span class="badge ${getCategoryBadge(f.cat)}">${escapeHtml(f.cat)}</span>
+            </div>
+            <div class="card-body">
+                <div class="card-field"><div class="card-field-label">OEM Part No</div><div class="card-field-value highlight">${escapeHtml(f.oem)}</div></div>
+                <div class="card-field"><div class="card-field-label">HIFI Equivalent</div><div class="card-field-value highlight">${escapeHtml(f.hifi)}</div></div>
+                <div class="card-field"><div class="card-field-label">Service Count</div><div class="card-field-value">${f.svcCount}</div></div>
+                <div class="card-field"><div class="card-field-label">Vehicles Using</div><div class="card-field-value">${f.vehCount}</div></div>
+                <div class="card-field"><div class="card-field-label">Monthly Demand</div><div class="card-field-value">${f.monthlyD > 0 ? f.monthlyD.toFixed(1) : '-'}</div></div>
+                <div class="card-field"><div class="card-field-label">Fleet Types</div><div class="card-field-value">${escapeHtml(f.fleet || '-')}</div></div>
+            </div>
+            ${priceHtml}
+            ${f.crossRef ? '<div style="margin-top:10px;"><div class="card-field-label">Cross References</div><div class="card-field-value" style="font-size:12px;">' + escapeHtml(f.crossRef) + '</div></div>' : ''}
+            ${vehicleTagsHtml}
+        </div>`;
+    }
+
+    function renderPriceTable(title, prices, type, delay) {
+        if (prices.length === 0) return '';
+
+        let headerRow, bodyRows;
+
+        if (type === 'supplier') {
+            headerRow = '<tr><th>Filter Code</th><th>Description</th><th>Qty</th><th>Unit Price (LKR)</th><th>Total (LKR)</th></tr>';
+            bodyRows = prices.map(p => `
+                <tr>
+                    <td><strong>${escapeHtml(p.code)}</strong></td>
+                    <td>${escapeHtml(p.desc)}</td>
+                    <td>${p.qty}</td>
+                    <td class="price-val">${formatPrice(p.unit)}</td>
+                    <td class="price-val">${formatPrice(p.total)}</td>
+                </tr>`).join('');
+        } else {
+            headerRow = '<tr><th>HIFI Code</th><th>Genuine Brand</th><th>Retail (excl VAT)</th><th>VAT (18%)</th><th>Total (incl VAT)</th></tr>';
+            bodyRows = prices.map(p => `
+                <tr>
+                    <td><strong>${escapeHtml(p.hifi)}</strong></td>
+                    <td>${escapeHtml(p.brand)}</td>
+                    <td class="price-val">${formatPrice(p.retail)}</td>
+                    <td>${formatPrice(p.vat)}</td>
+                    <td class="price-val">${formatPrice(p.sourcing)}</td>
+                </tr>`).join('');
+        }
+
+        return `
+        <div class="card" style="animation-delay:${delay}ms">
+            <div class="card-header">
+                <div class="card-title">${escapeHtml(title)}</div>
+                <span class="badge badge-other">${prices.length} items</span>
+            </div>
+            <table class="price-table">
+                <thead>${headerRow}</thead>
+                <tbody>${bodyRows}</tbody>
+            </table>
+        </div>`;
+    }
+
+    function renderFleetCard(v, filterCount, delay) {
+        return `
+        <div class="card" style="animation-delay:${delay}ms; cursor:pointer;" onclick="searchVehicle('${escapeHtml(v.ec)}')">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(v.ec)} — ${escapeHtml(v.desc || v.type)}</div>
+                    <div class="card-subtitle">${escapeHtml(v.brand)} ${escapeHtml(v.model)} • ${escapeHtml(v.reg)}</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    ${filterCount > 0 ? `<span class="badge badge-oil">${filterCount} filters</span>` : ''}
+                    <span class="badge badge-other">${escapeHtml(v.type || '-')}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-field"><div class="card-field-label">Year</div><div class="card-field-value">${escapeHtml(v.year)}</div></div>
+                <div class="card-field"><div class="card-field-label">Capacity</div><div class="card-field-value">${escapeHtml(v.cap)}</div></div>
+                <div class="card-field"><div class="card-field-label">Site</div><div class="card-field-value">${escapeHtml(v.site)}</div></div>
+                <div class="card-field"><div class="card-field-label">GPS</div><div class="card-field-value">${escapeHtml(v.gps)}</div></div>
+            </div>
+        </div>`;
+    }
+
+    function showEmptyState() {
+        const grid = document.getElementById('resultsGrid');
+        document.getElementById('resultCount').innerHTML = '';
+
+        const tips = {
+            'vehicle': 'Enter a vehicle E&C number like <strong>LB-01</strong>, <strong>DT-57</strong>, or registration like <strong>ZA-2609</strong> to find its filters.',
+            'filter': 'Enter an OEM part number like <strong>320/04134</strong> or HIFI code like <strong>SO 10058</strong> to find compatible vehicles.',
+            'category': 'Select a category from the dropdown or type to search. Try <strong>Oil Filter</strong>, <strong>Fuel 1</strong>, or <strong>Air</strong>.',
+            'price': 'Search by filter code to find supplier and genuine prices. All prices in LKR.',
+            'fleet': 'Browse the full fleet register. Click any vehicle to see its filter requirements.'
+        };
+
+        grid.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">🔧</div>
+                <div class="empty-title">Start your search</div>
+                <div class="empty-desc">${tips[currentMode] || ''}</div>
+            </div>`;
+    }
+
+    // ============================================================
+    // UTILITIES
+    // ============================================================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function searchVehicle(ec) {
+        switchMode('vehicle');
+        document.getElementById('searchInput').value = ec;
+        document.getElementById('searchClear').classList.add('visible');
+        performSearch();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function searchFilter(oem) {
+        switchMode('filter');
+        document.getElementById('searchInput').value = oem;
+        document.getElementById('searchClear').classList.add('visible');
+        performSearch();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ============================================================
+    // LAUNCH
+    // ============================================================
+    window.addEventListener('load', init);
+    </script>
+</body>
+</html>
