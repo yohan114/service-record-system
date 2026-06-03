@@ -22,8 +22,20 @@
             <a href="#/dashboard" class="nav-item active" id="nav-dashboard">
                 <span class="nav-icon">📊</span> Dashboard
             </a>
+            <a href="#/daily-log" class="nav-item" id="nav-daily-log">
+                <span class="nav-icon">🗓️</span> Daily Log
+            </a>
+            <a href="#/service-records" class="nav-item" id="nav-service-records">
+                <span class="nav-icon">🔎</span> Service Records
+            </a>
             <a href="#/fleet" class="nav-item" id="nav-fleet">
                 <span class="nav-icon">🚛</span> Fleet & Filters
+            </a>
+            <a href="#/price-lists" class="nav-item" id="nav-price-lists">
+                <span class="nav-icon">💧</span> Price Lists
+            </a>
+            <a href="#/settings" class="nav-item" id="nav-settings">
+                <span class="nav-icon">⚙️</span> Settings
             </a>
         </nav>
     </aside>
@@ -40,13 +52,80 @@
                 </div>
             </header>
             
-            <div class="dashboard-grid">
+            <div class="dashboard-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <!-- Monthly Summary -->
+                <div class="card panel">
+                    <h2>Monthly Service Summary</h2>
+                    <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                        <table class="cost-table">
+                            <thead>
+                                <tr><th>Month</th><th>Total Services</th></tr>
+                            </thead>
+                            <tbody id="monthly-summary-list">
+                                <tr><td colspan="2" class="loading">Loading summary...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <!-- Recent Services -->
                 <div class="card panel">
                     <h2>Recent Service Activity</h2>
                     <div id="recent-services-list" class="recent-list">
                         <div class="loading">Loading recent services...</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Log View -->
+        <div id="view-daily-log" class="view" style="display:none;">
+            <header class="page-header">
+                <h1>Daily Service Log</h1>
+            </header>
+            <div class="card panel filter-bar">
+                <div style="display:flex; gap:16px; align-items:center;">
+                    <label style="font-weight:600;">Select Date:</label>
+                    <input type="date" id="dl-date" class="filter-select" style="width:200px; padding:8px 12px;">
+                    <button class="btn btn-primary" onclick="openNewServiceSheetFromDailyLog()">+ Add Service for Selected Day</button>
+                </div>
+            </div>
+            <div class="card panel" style="margin-top:20px;">
+                <h2>Services on Date</h2>
+                <div id="dl-services-list" class="recent-list">
+                    <div class="loading">Select a date to view services.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Records View -->
+        <div id="view-service-records" class="view" style="display:none;">
+            <header class="page-header">
+                <h1>Service Records Search</h1>
+            </header>
+            <div class="card panel search-controls">
+                <div class="replica-grid" style="grid-template-columns: 2fr 1fr 1fr auto; gap:12px; align-items: flex-end;">
+                    <div>
+                        <label style="display:block; margin-bottom:6px; font-weight:600;">Search Text:</label>
+                        <input type="text" id="sr-search-query" class="filter-select" style="width:100%;" placeholder="Search by Job No, EC, Reg No, Model...">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:6px; font-weight:600;">Start Date:</label>
+                        <input type="date" id="sr-start-date" class="filter-select" style="width:100%;">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:6px; font-weight:600;">End Date:</label>
+                        <input type="date" id="sr-end-date" class="filter-select" style="width:100%;">
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-primary" onclick="searchServiceRecords()">Search</button>
+                        <button class="btn btn-secondary" onclick="resetSearchRecords()">Reset</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card panel" style="margin-top:20px;">
+                <h2>Search Results</h2>
+                <div id="sr-results-list" class="records-list">
+                    <div class="loading">Enter search criteria and click Search.</div>
                 </div>
             </div>
         </div>
@@ -86,9 +165,98 @@
             </div>
         </div>
 
+        <!-- Price Lists View -->
+        <div id="view-price-lists" class="view" style="display:none;">
+            <header class="page-header">
+                <h1>Price Lists</h1>
+            </header>
+            <div class="search-tabs" id="priceTabs">
+                <button class="tab-btn active" id="btn-tab-oils" onclick="switchPriceTab('oils')">💧 Oils Price List</button>
+                <button class="tab-btn" id="btn-tab-filters" onclick="switchPriceTab('filters')">🔍 Filters Price List</button>
+            </div>
+            
+            <div class="card panel">
+                <!-- Search and add filter section -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; gap:16px;">
+                    <div style="display:flex; flex:1; max-width:400px; gap:8px;">
+                        <input type="text" id="pl-search" class="filter-select" placeholder="Search price list..." oninput="filterPriceList()">
+                    </div>
+                    <button class="btn btn-success" id="btn-add-price-item" onclick="openAddPriceItemModal()" style="display:none;">+ Add Filter Price</button>
+                </div>
+                
+                <!-- Oils List View -->
+                <div id="pl-oils-container">
+                    <form id="oils-price-form" onsubmit="saveOilsPriceList(event)">
+                        <div class="table-container">
+                            <table class="cost-table">
+                                <thead>
+                                    <tr>
+                                        <th>Oil Name</th>
+                                        <th>Default Type / Viscosity</th>
+                                        <th style="width:200px;">Price (Rs)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pl-oils-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div style="margin-top:15px; display:flex; justify-content:flex-end;">
+                            <button type="submit" class="btn btn-primary">Save Oils Price List</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Filters List View -->
+                <div id="pl-filters-container" style="display:none;">
+                    <div class="table-container" style="max-height: 600px; overflow-y: auto;">
+                        <table class="cost-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Filter No. / Part Number</th>
+                                    <th style="width:200px;">Price (Rs)</th>
+                                    <th style="width:120px; text-align:center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pl-filters-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings View -->
+        <div id="view-settings" class="view" style="display:none;">
+            <header class="page-header">
+                <h1>Math Settings</h1>
+            </header>
+            <div class="card panel" style="max-width:600px;">
+                <h2>Configure Calculation Logic</h2>
+                <p style="margin-bottom:20px; color:var(--text-secondary)">Specify the threshold and rates for labor and sundry calculations. Saving these updates the logic for future jobs.</p>
+                <form id="settingsForm" onsubmit="saveSettings(event)">
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:6px; font-weight:600;">Labour Charge (≤ Threshold %):</label>
+                        <input type="number" id="set-labour-under" class="filter-select" style="width:100%;" step="0.1" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:6px; font-weight:600;">Labour Charge (> Threshold %):</label>
+                        <input type="number" id="set-labour-over" class="filter-select" style="width:100%;" step="0.1" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:6px; font-weight:600;">Parts Subtotal Threshold (Rs):</label>
+                        <input type="number" id="set-labour-threshold" class="filter-select" style="width:100%;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:20px;">
+                        <label style="display:block; margin-bottom:6px; font-weight:600;">Sundry Charge (% of Parts):</label>
+                        <input type="number" id="set-sundry-rate" class="filter-select" style="width:100%;" step="0.1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; padding:12px;">Save Settings</button>
+                </form>
+            </div>
+        </div>
+
     </main>
 
-    <!-- Modals -->
+    <!-- Service History Modal -->
     <div id="serviceHistoryModal" class="modal">
         <div class="modal-content large">
             <div class="modal-header">
@@ -110,6 +278,15 @@
                 <div class="replica-header">
                     <h2>Edward and Christie (Pvt) Ltd</h2>
                     <h3>Vehicle/ Machinery Service Details</h3>
+                </div>
+
+                <!-- Vehicle Picker for Daily Log/Records search -->
+                <div id="ns-vehicle-picker-container" class="card panel select-vehicle-header" style="margin-bottom:15px; border-color:var(--accent-orange)">
+                    <label style="font-weight:600; color:var(--accent-orange)">Select Vehicle to Service:</label>
+                    <div class="autocomplete" style="position:relative; margin-top:5px;">
+                        <input type="text" id="ns-vehicle-search" placeholder="Type EC Code, Reg No or Model..." style="width:100%; padding:8px 12px; border:1px solid var(--border-color); border-radius:4px; background:var(--bg-card); color:var(--text-primary)">
+                        <div id="ns-vehicle-suggestions" class="autocomplete-items"></div>
+                    </div>
                 </div>
 
                 <div class="replica-grid header-grid">
@@ -153,6 +330,26 @@
                     </table>
                 </div>
 
+                <!-- Math Calculation Summary Panel -->
+                <div class="replica-math-summary">
+                    <div class="math-row">
+                        <span>Parts Subtotal:</span>
+                        <span id="ns-parts-subtotal">Rs 0.00</span>
+                    </div>
+                    <div class="math-row">
+                        <span>Labour (<span id="ns-labour-rate">-</span>%):</span>
+                        <span id="ns-labour-charge">Rs 0.00</span>
+                    </div>
+                    <div class="math-row">
+                        <span>Sundry (<span id="ns-sundry-rate">-</span>%):</span>
+                        <span id="ns-sundry-charge">Rs 0.00</span>
+                    </div>
+                    <div class="math-row grand-total-row">
+                        <span>Grand Total:</span>
+                        <span id="ns-grand-total">Rs 0.00</span>
+                    </div>
+                </div>
+
                 <div class="replica-footer">
                     <div class="upkeep-section">
                         <b>Up Keeping of Equipment/Vehicle</b>
@@ -166,8 +363,35 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('newServiceModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Service Job</button>
+                    <button type="button" class="btn btn-secondary" id="btn-print-invoice" onclick="printInvoice()" style="display:none;">Print Invoice</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-job">Save Service Job</button>
                 </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit/Add Filter Price Modal -->
+    <div id="priceItemModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 id="price-modal-title">Add/Edit Filter Price</h2>
+                <button class="btn btn-secondary" onclick="closeModal('priceItemModal')">Close</button>
+            </div>
+            <form id="priceItemForm" onsubmit="saveFilterPriceItem(event)">
+                <input type="hidden" id="pi-id">
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Filter Category:</label>
+                    <input type="text" id="pi-category" class="filter-select" style="width:100%;" required placeholder="e.g. Air Filter">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Filter No. / Part Number:</label>
+                    <input type="text" id="pi-no" class="filter-select" style="width:100%;" required placeholder="e.g. C115">
+                </div>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Price (Rs):</label>
+                    <input type="number" id="pi-price" class="filter-select" style="width:100%;" step="0.01" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:10px;">Save Item</button>
             </form>
         </div>
     </div>
@@ -176,5 +400,9 @@
     <script src="js/views/fleet.js"></script>
     <script src="js/views/dashboard.js"></script>
     <script src="js/views/service_form.js"></script>
+    <script src="js/views/daily_log.js"></script>
+    <script src="js/views/service_records.js"></script>
+    <script src="js/views/price_lists.js"></script>
+    <script src="js/views/settings.js"></script>
 </body>
 </html>

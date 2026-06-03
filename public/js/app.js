@@ -4,6 +4,14 @@ let globalData = {
     links: [],
     prices: [],
     genuine: [],
+    oilsList: [],
+    filtersList: [],
+    settings: {
+        labour_rate_under_threshold: "20",
+        labour_rate_over_threshold: "15",
+        labour_threshold: "10000",
+        sundry_rate: "5"
+    },
     categories: new Set(),
     brands: new Set(),
     types: new Set()
@@ -21,10 +29,31 @@ function handleRoute() {
         document.getElementById('view-fleet').style.display = 'block';
         document.getElementById('nav-fleet').classList.add('active');
         if (typeof renderResults === 'function') renderResults();
-    } else {
+    } 
+    else if (hash === '#/daily-log') {
+        document.getElementById('view-daily-log').style.display = 'block';
+        document.getElementById('nav-daily-log').classList.add('active');
+        if (typeof initDailyLog === 'function') initDailyLog();
+    }
+    else if (hash === '#/service-records') {
+        document.getElementById('view-service-records').style.display = 'block';
+        document.getElementById('nav-service-records').classList.add('active');
+        if (typeof initServiceRecords === 'function') initServiceRecords();
+    }
+    else if (hash === '#/price-lists') {
+        document.getElementById('view-price-lists').style.display = 'block';
+        document.getElementById('nav-price-lists').classList.add('active');
+        if (typeof initPriceLists === 'function') initPriceLists();
+    }
+    else if (hash === '#/settings') {
+        document.getElementById('view-settings').style.display = 'block';
+        document.getElementById('nav-settings').classList.add('active');
+        if (typeof initSettingsView === 'function') initSettingsView();
+    }
+    else {
         document.getElementById('view-dashboard').style.display = 'block';
         document.getElementById('nav-dashboard').classList.add('active');
-        loadRecentServices();
+        if (typeof loadRecentServices === 'function') loadRecentServices();
     }
 }
 
@@ -40,6 +69,12 @@ async function initApp() {
         globalData.links = db.links || [];
         globalData.prices = db.prices || [];
         globalData.genuine = db.genuine || [];
+        globalData.oilsList = db.oilsList || [];
+        globalData.filtersList = db.filtersList || [];
+        
+        if (db.settings) {
+            globalData.settings = { ...globalData.settings, ...db.settings };
+        }
         
         db.vehicles.forEach(v => {
             if(v.VehicleType) globalData.types.add(v.VehicleType.trim().toUpperCase());
@@ -68,14 +103,17 @@ async function initApp() {
 
     } catch (err) {
         console.error("Error loading data:", err);
-        document.getElementById('loadingState').innerHTML = `<div style="color:red">Failed to connect to database.<br>${err.message}</div>`;
+        const loadingState = document.getElementById('loadingState');
+        if (loadingState) {
+            loadingState.innerHTML = `<div style="color:red">Failed to connect to database.<br>${err.message}</div>`;
+        }
     }
 }
 
 // Utility: Format Currency
 function formatCurrency(num) {
-    if(!num || num == '0') return '-';
-    return "Rs " + parseFloat(num).toLocaleString('en-US', {minimumFractionDigits: 2});
+    if(num === undefined || num === null || num === '' || num == '0') return 'Rs 0.00';
+    return "Rs " + parseFloat(num).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 function closeModal(id) {
