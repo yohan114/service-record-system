@@ -1,18 +1,20 @@
 {
   "name": "service-record",
-  "version": "1.0.0",
-  "description": "",
-  "main": "find_batch1_ids.js",
+  "version": "2.0.0",
+  "description": "Edward & Christie Fleet Service Record System",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "seed": "node seed.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "better-sqlite3": "^11.8.1",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "node-adodb": "^5.0.3"
+    "xlsx": "^0.18.5"
   }
 }
